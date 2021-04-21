@@ -1,2 +1,2 @@
-include ':app'
+include ':Digipong'
 rootProject.name = "My Application"

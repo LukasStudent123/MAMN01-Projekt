@@ -1,4 +1,4 @@
-package com.example.myapplication;
+package com.example.digipong;
 
 import androidx.appcompat.app.AppCompatActivity;
 
