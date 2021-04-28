@@ -14,13 +14,16 @@ import android.widget.Toast;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Random;
 
 public class MainActivity extends AppCompatActivity {
 
-    private TextView background, quote;
+    private TextView background, q;
     private ImageView logo;
     private ArrayList<String> quotes;
     private Handler handler;
+    private Random rand;
+
 
     @Override
     protected void onResume() {
@@ -39,7 +42,13 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         background = (TextView) findViewById(R.id.background);
-        quote = (TextView) findViewById(R.id.quote);
+        q = (TextView) findViewById(R.id.quote);
+
+        //Nytt quote varje gång appen öppnas
+        getQ();
+        rand = new Random();
+        int i = rand.nextInt(3);
+        q.setText(quotes.get(i));
 
         handler = new Handler();
         handler.postDelayed(new Runnable() {
@@ -61,6 +70,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void getQ(){
+        quotes = new ArrayList<>();
         quotes.add("Drink along with Digipong");
         quotes.add("Nothing can go wrong with DigiPong");
         quotes.add("In coronatimes - DigiPong is where you belong");
