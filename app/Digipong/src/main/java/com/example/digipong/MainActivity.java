@@ -14,6 +14,7 @@ import android.widget.Toast;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Random;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -40,6 +41,10 @@ public class MainActivity extends AppCompatActivity {
 
         background = (TextView) findViewById(R.id.background);
         quote = (TextView) findViewById(R.id.quote);
+        quotes = new ArrayList<>();
+        getQ();
+        Random rand = new Random();
+        quote.setText(quotes.get(rand.nextInt(3)));
 
         handler = new Handler();
         handler.postDelayed(new Runnable() {

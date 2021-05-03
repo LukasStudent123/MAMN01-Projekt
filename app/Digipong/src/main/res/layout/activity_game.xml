@@ -19,9 +19,10 @@
         android:id="@+id/imageView2"
         android:layout_width="169dp"
         android:layout_height="168dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/enemycup6"
         app:srcCompat="@drawable/dplogo"
-        tools:layout_editor_absoluteX="121dp"
-        tools:layout_editor_absoluteY="251dp"
         tools:ignore="MissingConstraints" />
 
     <ImageView
@@ -40,63 +41,75 @@
         android:id="@+id/enemycup1"
         android:layout_width="79dp"
         android:layout_height="76dp"
+        app:layout_constraintEnd_toStartOf="@+id/enemycup2"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/filledcup"
-        tools:ignore="MissingConstraints"
-        tools:layout_editor_absoluteX="80dp"
-        tools:layout_editor_absoluteY="32dp" />
+        tools:ignore="MissingConstraints" />
 
     <ImageView
         android:id="@+id/enemycup2"
         android:layout_width="79dp"
         android:layout_height="76dp"
+        android:layout_marginEnd="56dp"
+        android:layout_marginRight="56dp"
+        app:layout_constraintEnd_toStartOf="@+id/enemycup3"
+        app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/filledcup"
-        tools:ignore="MissingConstraints"
-        tools:layout_editor_absoluteX="151dp"
-        tools:layout_editor_absoluteY="32dp" />
+        tools:ignore="MissingConstraints" />
 
     <ImageView
         android:id="@+id/enemycup3"
         android:layout_width="79dp"
         android:layout_height="76dp"
+        android:layout_marginEnd="28dp"
+        android:layout_marginRight="28dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/filledcup"
-        tools:ignore="MissingConstraints"
-        tools:layout_editor_absoluteX="211dp"
-        tools:layout_editor_absoluteY="32dp" />
+        tools:ignore="MissingConstraints" />
 
     <ImageView
         android:id="@+id/enemycup4"
         android:layout_width="79dp"
         android:layout_height="76dp"
+        android:layout_marginStart="88dp"
+        android:layout_marginLeft="88dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/enemycup1"
         app:srcCompat="@drawable/filledcup"
-        tools:ignore="MissingConstraints"
-        tools:layout_editor_absoluteX="113dp"
-        tools:layout_editor_absoluteY="69dp" />
+        tools:ignore="MissingConstraints" />
+
     <ImageView
         android:id="@+id/enemycup5"
         android:layout_width="79dp"
         android:layout_height="76dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/enemycup4"
+        app:layout_constraintTop_toBottomOf="@+id/enemycup3"
         app:srcCompat="@drawable/filledcup"
-        tools:ignore="MissingConstraints"
-        tools:layout_editor_absoluteX="183dp"
-        tools:layout_editor_absoluteY="69dp" />
+        tools:ignore="MissingConstraints" />
 
     <ImageView
         android:id="@+id/enemycup6"
         android:layout_width="79dp"
         android:layout_height="76dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/enemycup4"
         app:srcCompat="@drawable/filledcup"
-        tools:ignore="MissingConstraints"
-        tools:layout_editor_absoluteX="151dp"
-        tools:layout_editor_absoluteY="108dp" />
+        tools:ignore="MissingConstraints" />
 
     <ImageView
         android:id="@+id/pingpongball"
         android:layout_width="49dp"
         android:layout_height="49dp"
-        app:srcCompat="@drawable/pingpong"
-        tools:ignore="MissingConstraints"
-        tools:layout_editor_absoluteX="181dp"
-        tools:layout_editor_absoluteY="446dp" />
+        app:layout_constraintBottom_toTopOf="@+id/swipe"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageView2"
+        app:srcCompat="@drawable/ballwithborder"
+        tools:ignore="MissingConstraints" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
