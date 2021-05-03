@@ -21,9 +21,6 @@ import android.view.animation.RotateAnimation;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
-import androidx.dynamicanimation.animation.DynamicAnimation;
-import androidx.dynamicanimation.animation.FlingAnimation;
-
 public class GameActivity extends AppCompatActivity implements
         GestureDetector.OnGestureListener,
         GestureDetector.OnDoubleTapListener {
