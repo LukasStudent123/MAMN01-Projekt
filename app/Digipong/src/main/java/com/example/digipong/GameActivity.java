@@ -8,7 +8,17 @@ import android.widget.ImageView;
 
 public class GameActivity extends AppCompatActivity {
     private ImageView table;
+    private ImageView[] enemycups;
 
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_game);
+
+        //table = (ImageView) findViewById(R.id.table);
+        this.enemycups = new ImageView[6];
+
+    }
     @Override
     protected void onResume() {
         super.onResume();
@@ -18,13 +28,4 @@ public class GameActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
     }
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_game);
-
-        table = (ImageView) findViewById(R.id.table);
-    }
-
 }

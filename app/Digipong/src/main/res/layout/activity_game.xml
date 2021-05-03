@@ -16,27 +16,13 @@
         tools:layout_editor_absoluteY="-28dp" />
 
     <ImageView
-        android:id="@+id/table"
-        android:layout_width="342dp"
-        android:layout_height="637dp"
-        android:gravity="center"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.492"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.17"
-        app:srcCompat="@mipmap/table" />
-
-    <ImageView
         android:id="@+id/imageView2"
         android:layout_width="169dp"
         android:layout_height="168dp"
-        app:layout_constraintBottom_toBottomOf="@+id/table"
-        app:layout_constraintEnd_toEndOf="@+id/table"
-        app:layout_constraintStart_toStartOf="@+id/table"
-        app:layout_constraintTop_toTopOf="@+id/table"
-        app:srcCompat="@drawable/dplogo" />
+        app:srcCompat="@drawable/dplogo"
+        tools:layout_editor_absoluteX="121dp"
+        tools:layout_editor_absoluteY="251dp"
+        tools:ignore="MissingConstraints" />
 
     <ImageView
         android:id="@+id/swipe"
@@ -47,6 +33,70 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:srcCompat="@drawable/ic_swipe" />
+        app:srcCompat="@drawable/ic_swipe"
+        tools:ignore="VectorDrawableCompat" />
+
+    <ImageView
+        android:id="@+id/enemycup1"
+        android:layout_width="79dp"
+        android:layout_height="76dp"
+        app:srcCompat="@drawable/filledcup"
+        tools:ignore="MissingConstraints"
+        tools:layout_editor_absoluteX="80dp"
+        tools:layout_editor_absoluteY="32dp" />
+
+    <ImageView
+        android:id="@+id/enemycup2"
+        android:layout_width="79dp"
+        android:layout_height="76dp"
+        app:srcCompat="@drawable/filledcup"
+        tools:ignore="MissingConstraints"
+        tools:layout_editor_absoluteX="151dp"
+        tools:layout_editor_absoluteY="32dp" />
+
+    <ImageView
+        android:id="@+id/enemycup3"
+        android:layout_width="79dp"
+        android:layout_height="76dp"
+        app:srcCompat="@drawable/filledcup"
+        tools:ignore="MissingConstraints"
+        tools:layout_editor_absoluteX="211dp"
+        tools:layout_editor_absoluteY="32dp" />
+
+    <ImageView
+        android:id="@+id/enemycup4"
+        android:layout_width="79dp"
+        android:layout_height="76dp"
+        app:srcCompat="@drawable/filledcup"
+        tools:ignore="MissingConstraints"
+        tools:layout_editor_absoluteX="113dp"
+        tools:layout_editor_absoluteY="69dp" />
+    <ImageView
+        android:id="@+id/enemycup5"
+        android:layout_width="79dp"
+        android:layout_height="76dp"
+        app:srcCompat="@drawable/filledcup"
+        tools:ignore="MissingConstraints"
+        tools:layout_editor_absoluteX="183dp"
+        tools:layout_editor_absoluteY="69dp" />
+
+    <ImageView
+        android:id="@+id/enemycup6"
+        android:layout_width="79dp"
+        android:layout_height="76dp"
+        app:srcCompat="@drawable/filledcup"
+        tools:ignore="MissingConstraints"
+        tools:layout_editor_absoluteX="151dp"
+        tools:layout_editor_absoluteY="108dp" />
+
+    <ImageView
+        android:id="@+id/pingpongball"
+        android:layout_width="49dp"
+        android:layout_height="49dp"
+        app:srcCompat="@drawable/pingpong"
+        tools:ignore="MissingConstraints"
+        tools:layout_editor_absoluteX="181dp"
+        tools:layout_editor_absoluteY="446dp" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
