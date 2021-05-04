@@ -1,24 +1,30 @@
 package com.example.digipong;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.Random;
 
 public class RankActivity extends AppCompatActivity {
     private ImageView img;
     private TextView one;
     private String name;
+    private Random rand;
 
     private ArrayList<TextView> textViews;
 
     // Kanske vi vill byta ut till nån typ av sorterad lista
     private ArrayList<Person> persons;
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,12 +38,17 @@ public class RankActivity extends AppCompatActivity {
         textViews.add(findViewById(R.id.four));
         textViews.add(findViewById(R.id.five));
 
+        rand = new Random();
+
         // Adds all players to a list
         persons = new ArrayList<>();
-        persons.add(new Person("Ville", 9, 50));
-        persons.add(new Person("Sara", 12, 49));
-        persons.add(new Person("Lukas", 10, 48));
-        persons.add(new Person("Emma", 11, 47));
+        persons.add(new Person("Ville", rand.nextInt(10), rand.nextInt(50)));
+        persons.add(new Person("Sara", rand.nextInt(10), rand.nextInt(50)));
+        persons.add(new Person("Lukas", rand.nextInt(10), rand.nextInt(50)));
+        persons.add(new Person("Emma", rand.nextInt(10), rand.nextInt(50)));
+
+        persons.sort(Comparator.comparing(Person::getNumberOfWins).reversed());
+
 
         for (int i = 0; i < persons.size(); i++){
             Person person = persons.get(i);
