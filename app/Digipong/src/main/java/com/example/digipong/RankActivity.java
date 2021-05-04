@@ -3,11 +3,13 @@ package com.example.digipong;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -18,6 +20,8 @@ public class RankActivity extends AppCompatActivity {
     private TextView one;
     private String name;
     private Random rand;
+
+    private StartActivity sa = new StartActivity();
 
     private ArrayList<TextView> textViews;
 
@@ -45,11 +49,11 @@ public class RankActivity extends AppCompatActivity {
         persons.add(new Person("Sara", rand.nextInt(10), rand.nextInt(50)));
         persons.add(new Person("Lukas", rand.nextInt(10), rand.nextInt(50)));
         persons.add(new Person("Emma", rand.nextInt(10), rand.nextInt(50)));
-        persons.add(new Person("Me", rand.nextInt(10), rand.nextInt(50)));
+        persons.add(new Person(sa.name, rand.nextInt(10), rand.nextInt(50)));
+
 
         //Sort persons by Number of wins
         persons.sort(Comparator.comparing(Person::getNumberOfWins).reversed());
-
 
         for (int i = 0; i < persons.size(); i++){
             Person person = persons.get(i);
