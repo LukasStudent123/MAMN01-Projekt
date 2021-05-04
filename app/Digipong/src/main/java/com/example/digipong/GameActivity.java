@@ -99,6 +99,7 @@ public class GameActivity extends AppCompatActivity implements
         ballx = ball.getX();
         bally = ball.getY();
         return true;
+        // Test
 
 
         //maxTranslationX = mMainLayout.getWidth() - ball.getWidth();
