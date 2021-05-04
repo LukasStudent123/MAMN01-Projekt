@@ -6,27 +6,37 @@ import androidx.core.view.GestureDetectorCompat;
 
 import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Path;
 import android.graphics.Point;
 import android.media.Image;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
+import android.view.ViewManager;
 import android.view.animation.Animation;
 import android.view.animation.RotateAnimation;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class GameActivity extends AppCompatActivity implements
         GestureDetector.OnGestureListener,
         GestureDetector.OnDoubleTapListener {
     private ImageView table;
-    private ImageView[] enemycups = new ImageView[6];
+   // private TextView rankingText;
+    private List<ImageView> enemycups = new ArrayList<>();
     private ImageView ball;
     private GestureDetectorCompat mDetector;
     private static final int MIN_DISTANCE_MOVED = 50;
@@ -38,6 +48,7 @@ public class GameActivity extends AppCompatActivity implements
     private float ballx;
     private float bally;
     private int ranking;
+    private Vibrator vibrator;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +57,12 @@ public class GameActivity extends AppCompatActivity implements
         ball = findViewById(R.id.pingpongball);
         addEnemyCups();
         ranking = 0;
+        //rankingText = findViewById(R.id.ranking);
+       // rankingText.setText(ranking);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+        }
+
         //mMainLayout = (RelativeLayout) findViewById(R.layout.activity_game);
         // Instantiate the gesture detector with the
         // application context and an implementation of
@@ -60,26 +77,64 @@ public class GameActivity extends AppCompatActivity implements
     }
 
     private void addEnemyCups() {
-        enemycups[0] = findViewById(R.id.enemycup1);
-        enemycups[1] = findViewById(R.id.enemycup2);
-        enemycups[2] = findViewById(R.id.enemycup3);
-        enemycups[3] = findViewById(R.id.enemycup4);
-        enemycups[4] = findViewById(R.id.enemycup5);
-        enemycups[5] = findViewById(R.id.enemycup6);
-    }
-
-    private Point getPoint(int id) {
-        return new Point(3,4);
+        enemycups.add(findViewById(R.id.enemycup1));
+        enemycups.add(findViewById(R.id.enemycup2));
+        enemycups.add(findViewById(R.id.enemycup3));
+        enemycups.add(findViewById(R.id.enemycup4));
+        enemycups.add(findViewById(R.id.enemycup5));
+        enemycups.add(findViewById(R.id.enemycup6));
     }
 
     private int getRanking() {
         return ranking;
     }
 
-    private boolean isCupHit() {
-        return false;
+    private void isCupHit() {
+
+        for (int i = 0; i < enemycups.size() ; i++) {
+            float tempx = enemycups.get(i).getX();
+            float tempy = enemycups.get(i).getY();
+            int tempwidth = enemycups.get(i).getWidth();
+            int tempheight = enemycups.get(i).getHeight();
+            System.out.println("Bollens bredd : " + ball.getWidth());
+
+            if(ballx >= tempx && ballx <= tempx + tempwidth && bally >= tempy && bally <= bally + tempheight) {
+                cupIsHit(enemycups.get(i), i);
+            }
+        }
     }
 
+    private void cupIsHit(ImageView imageView, int i) {
+        imageView.setImageResource(R.drawable.cupwithball);
+
+        final Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                imageView.setImageResource(R.drawable.emptycup);
+                enemycups.remove(i);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    vibrator.vibrate(VibrationEffect.createOneShot(500, VibrationEffect.DEFAULT_AMPLITUDE));
+                }
+            }
+        }, 1000);
+
+        /*final Handler handler2 = new Handler();
+        handler2.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                //Lägg in genomskinlig mugg
+            }
+        }, 3000); */
+
+        rankingUpdate();
+    }
+
+    private void rankingUpdate() {
+        ranking++;
+        //rankingText.setText(ranking);
+
+    }
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
@@ -96,8 +151,16 @@ public class GameActivity extends AppCompatActivity implements
         ObjectAnimator animator = ObjectAnimator.ofFloat(ball, View.X, View.Y, path);
         animator.setDuration(2000);
         animator.start();
-        ballx = ball.getX();
-        bally = ball.getY();
+
+        final Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                ballx = ball.getX();
+                bally = ball.getY();
+                isCupHit();            }
+        }, 2000);
+
         return true;
 
 
