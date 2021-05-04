@@ -33,7 +33,7 @@
         android:layout_height="59dp"
         android:layout_marginBottom="316dp"
         android:gravity="center"
-        android:text="Dring along with Digipong!"
+        android:text="Drink along with Digipong!"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
         android:textColor="#070707"
         android:textStyle="italic"
