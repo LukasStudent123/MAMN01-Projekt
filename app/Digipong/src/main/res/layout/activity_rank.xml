@@ -19,7 +19,7 @@
         android:id="@+id/tbd"
         android:layout_width="271dp"
         android:layout_height="103dp"
-        android:layout_marginBottom="88dp"
+        android:layout_marginBottom="124dp"
         android:gravity="center"
         android:text="In coronatimes - \n DigiPong is where you belong"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
@@ -33,21 +33,21 @@
         android:id="@+id/one"
         android:layout_width="256dp"
         android:layout_height="44dp"
+        android:gravity="center"
         android:padding="4dp"
         android:text="TextView"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
         app:layout_constraintBottom_toTopOf="@+id/two"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.503"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
         android:id="@+id/two"
         android:layout_width="256dp"
         android:layout_height="44dp"
         android:padding="4dp"
+        android:gravity="center"
         android:text="TextView"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
         app:layout_constraintBottom_toTopOf="@+id/three"
@@ -60,6 +60,7 @@
         android:layout_width="256dp"
         android:layout_height="44dp"
         android:padding="4dp"
+        android:gravity="center"
         android:text="TextView"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
         app:layout_constraintBottom_toTopOf="@+id/four"
@@ -71,6 +72,7 @@
         android:layout_width="256dp"
         android:layout_height="44dp"
         android:padding="4dp"
+        android:gravity="center"
         android:text="TextView"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
         app:layout_constraintBottom_toTopOf="@+id/five"
@@ -81,13 +83,27 @@
         android:id="@+id/five"
         android:layout_width="256dp"
         android:layout_height="44dp"
-        android:padding="4dp"
         android:layout_marginBottom="120dp"
+        android:gravity="center"
+        android:padding="4dp"
+        android:singleLine="false"
         android:text="TextView"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
         app:layout_constraintBottom_toTopOf="@+id/tbd"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.496"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="155dp"
+        android:layout_height="142dp"
+        app:layout_constraintBottom_toTopOf="@+id/one"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0"
+        app:srcCompat="@drawable/ic_trophy"
+        tools:ignore="VectorDrawableCompat" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

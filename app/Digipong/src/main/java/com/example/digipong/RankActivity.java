@@ -21,7 +21,6 @@ public class RankActivity extends AppCompatActivity {
 
     private ArrayList<TextView> textViews;
 
-    // Kanske vi vill byta ut till nån typ av sorterad lista
     private ArrayList<Person> persons;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
@@ -46,7 +45,9 @@ public class RankActivity extends AppCompatActivity {
         persons.add(new Person("Sara", rand.nextInt(10), rand.nextInt(50)));
         persons.add(new Person("Lukas", rand.nextInt(10), rand.nextInt(50)));
         persons.add(new Person("Emma", rand.nextInt(10), rand.nextInt(50)));
+        persons.add(new Person("Me", rand.nextInt(10), rand.nextInt(50)));
 
+        //Sort persons by Number of wins
         persons.sort(Comparator.comparing(Person::getNumberOfWins).reversed());
 
 
@@ -59,21 +60,14 @@ public class RankActivity extends AppCompatActivity {
             int numberOfHits = person.getNumberOfHits();
             textView.setText(name + "   Wins: " + numberOfWins + ", Hits: " + numberOfHits);
 
-            textView.setBackgroundColor(Color.rgb(245, 179, 0));
+            if( i % 2 == 0){
+                textView.setBackgroundColor(Color.rgb(245, 179, 0));
+            } else {
+                textView.setBackgroundColor(Color.rgb(250, 200, 40));
+            }
 
         }
 
-
-
-        /*
-        //Formatera i XML
-        one = (TextView) findViewById(R.id.one);
-        one.setBackgroundColor(Color.rgb(245, 179, 0));
-
-        //To-do lägg till användare i array och printa ut i textview
-        one.setText("1: " + name);
-
-         */
 
     }
 

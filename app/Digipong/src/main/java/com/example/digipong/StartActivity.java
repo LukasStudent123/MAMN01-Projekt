@@ -2,6 +2,8 @@ package com.example.digipong;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -12,6 +14,7 @@ import android.widget.Toast;
 
 public class StartActivity extends AppCompatActivity {
     private ImageView btnPlay, btnRanking;
+    private Button btnUser;
 
     @Override
     protected void onResume() {
@@ -27,9 +30,6 @@ public class StartActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_start);
-
-
-        btnRanking = (ImageView) findViewById(R.id.imgRanking);
 
         //Button1
         //get the button
@@ -53,6 +53,16 @@ public class StartActivity extends AppCompatActivity {
             }
         });
 
+        //Button3
+        //get the button
+        btnUser = (Button) findViewById(R.id.btnUser);
+        //action when click
+        btnUser.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openDialog();
+            }
+        });
 
     }
 
@@ -66,6 +76,22 @@ public class StartActivity extends AppCompatActivity {
         Intent intent = new Intent(this, RankActivity.class);
         startActivity(intent);
     }
+
+    private void openDialog() {
+        new AlertDialog.Builder(this)
+                .setTitle("To be implemented...")
+                .setMessage("Player information")
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                    }
+
+                })
+                .setNegativeButton("No", null)
+                .show();
+    }
+
+
 
 
 
