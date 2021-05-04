@@ -17,6 +17,7 @@ public class RankActivity extends AppCompatActivity {
         setContentView(R.layout.activity_rank);
 
     }
+    //to-do
 
 
 
