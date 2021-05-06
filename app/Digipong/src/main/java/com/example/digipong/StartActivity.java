@@ -2,16 +2,24 @@ package com.example.digipong;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class StartActivity extends AppCompatActivity {
     private ImageView btnPlay, btnRanking;
+    private Button btnUser;
+    public String name = "User1";
+    private EditText editText;
 
     @Override
     protected void onResume() {
@@ -28,13 +36,7 @@ public class StartActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_start);
 
-
-        btnRanking = (ImageView) findViewById(R.id.imgRanking);
-
-        //Button1
-        //get the button
         btnPlay = (ImageView) findViewById(R.id.imgPlay);
-        //action when click
         btnPlay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -42,10 +44,7 @@ public class StartActivity extends AppCompatActivity {
             }
         });
 
-        //Button2
-        //get the button
         btnRanking = (ImageView) findViewById(R.id.imgRanking);
-        //action when click
         btnRanking.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -53,6 +52,15 @@ public class StartActivity extends AppCompatActivity {
             }
         });
 
+        btnUser = (Button) findViewById(R.id.btnUser);
+        btnUser.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getApplicationContext(), "to be implemented...", Toast.LENGTH_SHORT)
+                        .show();
+                //openDialog();
+            }
+        });
 
     }
 
@@ -67,7 +75,24 @@ public class StartActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    private void openDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        LayoutInflater inflater = this.getLayoutInflater();
+        View view = inflater.inflate(R.layout.layout_dialog, null);
+        builder.setView(view)
+                .setTitle("Enter your name:")
+                .setPositiveButton("Save", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int id) {
+                        name = editText.getText().toString();
+                    }
+                })
+                .setNegativeButton("Cancel", null)
+                .show();
+        editText = view.findViewById(R.id.username);
 
-
+        Toast.makeText(getApplicationContext(), name, Toast.LENGTH_SHORT)
+                .show();
+    }
 
 }

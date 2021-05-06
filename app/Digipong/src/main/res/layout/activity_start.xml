@@ -31,12 +31,11 @@
         android:id="@+id/imgRanking"
         android:layout_width="191dp"
         android:layout_height="144dp"
+        android:layout_marginTop="36dp"
         android:clickable="true"
-        app:layout_constraintBottom_toBottomOf="@+id/background"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imgPlay"
-        app:layout_constraintVertical_bias="0.111"
         app:srcCompat="@drawable/ranking" />
 
     <ImageView
@@ -47,5 +46,19 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/dplogo" />
+
+    <Button
+        android:id="@+id/btnUser"
+        android:layout_width="113dp"
+        android:layout_height="69dp"
+        android:text="Profile"
+        android:textAllCaps="true"
+        android:textColor="#FFFFFF"
+        app:backgroundTint="#F5B300"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imgRanking"
+        app:layout_constraintVertical_bias="0.279" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
