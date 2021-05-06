@@ -114,7 +114,10 @@ public class GameActivity extends AppCompatActivity implements
             int ballheight = ball.getHeight();
             System.out.println("Bollens bredd : " + ball.getWidth());
 
-            if(ballx >= tempx && ballx <= tempx + tempwidth && bally >= tempy && bally <= tempy + tempheight) {
+            if(ballx + (ballwidth / 2) >= tempx + (tempwidth / 4)
+                    && ballx + (ballwidth / 2) <= tempx + (tempwidth*0.75)
+                    && bally + (ballheight / 2) >= tempy - (tempheight / 4)
+                    && bally + (ballheight / 2) <= tempy + (tempheight*0.5)) {
                 cupIsHit(enemycups.get(i), i);
                 break;
             }
