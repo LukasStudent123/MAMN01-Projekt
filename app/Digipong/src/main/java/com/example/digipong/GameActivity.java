@@ -8,6 +8,7 @@ import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Path;
 import android.graphics.Point;
 import android.media.Image;
@@ -27,6 +28,7 @@ import android.view.animation.RotateAnimation;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,6 +51,8 @@ public class GameActivity extends AppCompatActivity implements
     private float bally;
     private int ranking;
     private Vibrator vibrator;
+    final Handler handler = new Handler();
+    public static final float PIXELS_PER_SECOND = 10000;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,6 +93,16 @@ public class GameActivity extends AppCompatActivity implements
         return ranking;
     }
 
+    private void reset() {
+        Toast.makeText(getApplicationContext(), "You win!", Toast.LENGTH_SHORT)
+                .show();
+        addEnemyCups();
+        for (ImageView cup : enemycups) {
+            cup.setImageResource(R.drawable.filledcup);
+            cup.setVisibility(View.VISIBLE);
+        }
+    }
+
     private void isCupHit() {
 
         for (int i = 0; i < enemycups.size() ; i++) {
@@ -96,36 +110,39 @@ public class GameActivity extends AppCompatActivity implements
             float tempy = enemycups.get(i).getY();
             int tempwidth = enemycups.get(i).getWidth();
             int tempheight = enemycups.get(i).getHeight();
+            int ballwidth = ball.getWidth();
+            int ballheight = ball.getHeight();
             System.out.println("Bollens bredd : " + ball.getWidth());
 
-            if(ballx >= tempx && ballx <= tempx + tempwidth && bally >= tempy && bally <= bally + tempheight) {
+            if(ballx >= tempx && ballx <= tempx + tempwidth && bally >= tempy && bally <= tempy + tempheight) {
                 cupIsHit(enemycups.get(i), i);
+                break;
             }
         }
     }
 
     private void cupIsHit(ImageView imageView, int i) {
         imageView.setImageResource(R.drawable.cupwithball);
-
-        final Handler handler = new Handler();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            vibrator.vibrate(VibrationEffect.createOneShot(500, VibrationEffect.DEFAULT_AMPLITUDE));
+        }
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
                 imageView.setImageResource(R.drawable.emptycup);
-                enemycups.remove(i);
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    vibrator.vibrate(VibrationEffect.createOneShot(500, VibrationEffect.DEFAULT_AMPLITUDE));
-                }
             }
         }, 1000);
 
-        /*final Handler handler2 = new Handler();
-        handler2.postDelayed(new Runnable() {
+        handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                //Lägg in genomskinlig mugg
+                enemycups.get(i).setVisibility(View.INVISIBLE);
+                enemycups.remove(i);
+                if(enemycups.isEmpty()) {
+                    reset();
+                }
             }
-        }, 3000); */
+        }, 3000);
 
         rankingUpdate();
     }
@@ -138,21 +155,25 @@ public class GameActivity extends AppCompatActivity implements
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+        float maxFlingVelocity    = ViewConfiguration.get(getApplicationContext()).getScaledMaximumFlingVelocity();
+        float velocityPercentX    = velocityX / maxFlingVelocity;          // the percent is a value in the range of (0, 1]
+        float normalizedVelocityX = velocityPercentX * PIXELS_PER_SECOND;  // where PIXELS_PER_SECOND is a device-independent measurement
+        float velocityPercentY    = velocityY / maxFlingVelocity;          // the percent is a value in the range of (0, 1]
+        float normalizedVelocityY = velocityPercentY * PIXELS_PER_SECOND;  // where PIXELS_PER_SECOND is a device-independent measurement
+        int ballwidth = ball.getWidth();
+        int ballheight = ball.getHeight();
         System.out.println("fling");
         Log.v("speed", "velocityX: " + String.valueOf(velocityX) + " velocityY: " + String.valueOf(velocityY));
         Path path = new Path();
-        int dx = (int) (e2.getX() - e1.getX());
-        int dy = (int) (e2.getY() - e1.getY());
         //startpunkt för animation
-        path.moveTo(e1.getX(), e1.getY() - 200);
+        path.moveTo(e1.getX() - (ballwidth / 2), e1.getY() - ballheight - 150);
         //slutpunkt för animation
-        path.lineTo(e2.getX() + (velocityX), e2.getY() + (velocityY));
+        path.lineTo(e2.getX() + (normalizedVelocityX) - (ballwidth / 2), e2.getY() + (normalizedVelocityY) - ballheight - 150);
         //path.arcTo(0f, 0f, 1000f, 1000f, 270f, -180f, true);
         ObjectAnimator animator = ObjectAnimator.ofFloat(ball, View.X, View.Y, path);
         animator.setDuration(2000);
         animator.start();
 
-        final Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
