@@ -12,6 +12,7 @@ import android.graphics.Color;
 import android.graphics.Path;
 import android.graphics.Point;
 import android.media.Image;
+import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -53,11 +54,13 @@ public class GameActivity extends AppCompatActivity implements
     private Vibrator vibrator;
     final Handler handler = new Handler();
     public static final float PIXELS_PER_SECOND = 10000;
+    private MediaPlayer mediaPlayer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
+        mediaPlayer = MediaPlayer.create(this, R.raw.onhit);
         ball = findViewById(R.id.pingpongball);
         addEnemyCups();
         ranking = 0;
@@ -119,6 +122,7 @@ public class GameActivity extends AppCompatActivity implements
                     && bally + (ballheight / 2) >= tempy - (tempheight / 4)
                     && bally + (ballheight / 2) <= tempy + (tempheight*0.5)) {
                 cupIsHit(enemycups.get(i), i);
+                mediaPlayer.start();
                 break;
             }
         }
