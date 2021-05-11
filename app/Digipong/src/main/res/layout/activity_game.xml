@@ -16,32 +16,49 @@
         tools:layout_editor_absoluteY="-28dp" />
 
     <ImageView
-        android:id="@+id/imageView2"
-        android:layout_width="169dp"
-        android:layout_height="168dp"
+        android:layout_width="350dp"
+        android:layout_height="600dp"
+        android:layout_marginTop="20dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/enemycup6"
-        app:srcCompat="@drawable/dplogo"
-        tools:ignore="MissingConstraints" />
+        app:srcCompat="@drawable/bordtight"
+        tools:ignore="MissingConstraints"
+        tools:layout_editor_absoluteY="1dp" />
+
 
     <ImageView
         android:id="@+id/swipe"
         android:layout_width="129dp"
         android:layout_height="121dp"
-        android:layout_marginBottom="52dp"
+        android:layout_marginBottom="100dp"
         android:rotation="92"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.539"
         app:layout_constraintStart_toStartOf="parent"
         app:srcCompat="@drawable/ic_swipe"
         tools:ignore="VectorDrawableCompat" />
 
     <ImageView
+        android:id="@+id/imageView2"
+        android:layout_width="213dp"
+        android:layout_height="208dp"
+        android:layout_gravity="center_horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.575"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/enemycup4"
+        app:srcCompat="@drawable/dplogo"
+        tools:ignore="MissingConstraints" />
+
+    <ImageView
         android:id="@+id/enemycup1"
         android:layout_width="79dp"
         android:layout_height="76dp"
+        android:layout_marginLeft="116dp"
+        android:layout_marginTop="16dp"
         app:layout_constraintEnd_toStartOf="@+id/enemycup2"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/filledcup"
@@ -51,8 +68,7 @@
         android:id="@+id/enemycup2"
         android:layout_width="79dp"
         android:layout_height="76dp"
-        android:layout_marginEnd="56dp"
-        android:layout_marginRight="56dp"
+        android:layout_marginTop="16dp"
         app:layout_constraintEnd_toStartOf="@+id/enemycup3"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/filledcup"
@@ -62,8 +78,9 @@
         android:id="@+id/enemycup3"
         android:layout_width="79dp"
         android:layout_height="76dp"
-        android:layout_marginEnd="28dp"
-        android:layout_marginRight="28dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="62dp"
+        android:layout_marginRight="84dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/filledcup"
@@ -73,10 +90,11 @@
         android:id="@+id/enemycup4"
         android:layout_width="79dp"
         android:layout_height="76dp"
-        android:layout_marginStart="88dp"
-        android:layout_marginLeft="88dp"
+        android:layout_marginTop="85dp"
+        app:layout_constraintEnd_toStartOf="@+id/enemycup5"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/enemycup1"
+        app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/filledcup"
         tools:ignore="MissingConstraints" />
 
@@ -84,9 +102,10 @@
         android:id="@+id/enemycup5"
         android:layout_width="79dp"
         android:layout_height="76dp"
+        android:layout_marginTop="85dp"
+        android:layout_marginRight="100dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/enemycup4"
-        app:layout_constraintTop_toBottomOf="@+id/enemycup3"
+        app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/filledcup"
         tools:ignore="MissingConstraints" />
 
@@ -95,6 +114,7 @@
         android:layout_width="79dp"
         android:layout_height="76dp"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.509"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/enemycup4"
         app:srcCompat="@drawable/filledcup"
@@ -107,9 +127,15 @@
         app:layout_constraintBottom_toTopOf="@+id/swipe"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView2"
+        app:layout_constraintVertical_bias="0.639"
         app:srcCompat="@drawable/ballwithborder"
         tools:ignore="MissingConstraints" />
 
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_begin="20dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
