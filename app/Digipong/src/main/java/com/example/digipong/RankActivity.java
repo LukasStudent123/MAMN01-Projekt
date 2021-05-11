@@ -18,10 +18,9 @@ import java.util.Random;
 public class RankActivity extends AppCompatActivity {
     private ImageView img;
     private TextView one;
-    private String name;
     private Random rand;
-
-    private StartActivity sa = new StartActivity();
+    //fetch username string from startActivity
+    private String name;
 
     private ArrayList<TextView> textViews;
 
@@ -32,6 +31,8 @@ public class RankActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_rank);
+
+        name = getIntent().getStringExtra("x");
 
         // Adds all textViews on screen to a combined list
         textViews = new ArrayList<>();
@@ -49,7 +50,7 @@ public class RankActivity extends AppCompatActivity {
         persons.add(new Person("Sara", rand.nextInt(10), rand.nextInt(50)));
         persons.add(new Person("Lukas", rand.nextInt(10), rand.nextInt(50)));
         persons.add(new Person("Emma", rand.nextInt(10), rand.nextInt(50)));
-        persons.add(new Person(sa.name, rand.nextInt(10), rand.nextInt(50)));
+        persons.add(new Person(name, rand.nextInt(10), rand.nextInt(50)));
 
 
         //Sort persons by Number of wins

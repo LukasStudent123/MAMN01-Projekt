@@ -56,9 +56,9 @@ public class StartActivity extends AppCompatActivity {
         btnUser.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getApplicationContext(), "to be implemented...", Toast.LENGTH_SHORT)
-                        .show();
-                //openDialog();
+                //Toast.makeText(getApplicationContext(), "to be implemented...", Toast.LENGTH_SHORT)
+                        //.show();
+                openDialog();
             }
         });
 
@@ -67,11 +67,17 @@ public class StartActivity extends AppCompatActivity {
 
     public void startGame(){
         Intent intent = new Intent(this, GameActivity.class);
+        intent.putExtra("x", name);
         startActivity(intent);
     }
 
     public void openRanking(){
         Intent intent = new Intent(this, RankActivity.class);
+        intent.putExtra("x", name);
+        /*
+        Toast.makeText(getApplicationContext(), getIntent().getStringExtra("x"), Toast.LENGTH_SHORT)
+            .show();
+         */
         startActivity(intent);
     }
 
