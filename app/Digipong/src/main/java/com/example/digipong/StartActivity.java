@@ -97,8 +97,8 @@ public class StartActivity extends AppCompatActivity {
                 .show();
         editText = view.findViewById(R.id.username);
 
-        Toast.makeText(getApplicationContext(), name, Toast.LENGTH_SHORT)
-                .show();
+        //Toast.makeText(getApplicationContext(), name, Toast.LENGTH_SHORT)
+                //.show();
     }
 
 }

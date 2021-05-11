@@ -19,7 +19,6 @@ public class RankActivity extends AppCompatActivity {
     private ImageView img;
     private TextView one;
     private Random rand;
-    //fetch username string from startActivity
     private String name;
 
     private ArrayList<TextView> textViews;
