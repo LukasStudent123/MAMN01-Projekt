@@ -7,6 +7,7 @@ import androidx.core.view.GestureDetectorCompat;
 import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Path;
@@ -38,7 +39,7 @@ public class GameActivity extends AppCompatActivity implements
         GestureDetector.OnGestureListener,
         GestureDetector.OnDoubleTapListener {
     private ImageView table;
-   // private TextView rankingText;
+    private TextView rankingText;
     private List<ImageView> enemycups = new ArrayList<>();
     private ImageView ball;
     private GestureDetectorCompat mDetector;
@@ -51,10 +52,12 @@ public class GameActivity extends AppCompatActivity implements
     private float ballx;
     private float bally;
     private int ranking;
+    private int totalHits;
     private Vibrator vibrator;
     final Handler handler = new Handler();
     public static final float PIXELS_PER_SECOND = 10000;
     private MediaPlayer mediaPlayer;
+    private int counter = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,9 +66,12 @@ public class GameActivity extends AppCompatActivity implements
         mediaPlayer = MediaPlayer.create(this, R.raw.onhit);
         ball = findViewById(R.id.pingpongball);
         addEnemyCups();
+
         ranking = 0;
-        //rankingText = findViewById(R.id.ranking);
-       // rankingText.setText(ranking);
+        rankingText = findViewById(R.id.score);
+        totalHits = getIntent().getIntExtra("y", 0);
+        getIntent().removeExtra("y");
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
         }
@@ -78,7 +84,6 @@ public class GameActivity extends AppCompatActivity implements
         // Set the gesture detector as the double tap
         // listener.
         mDetector.setOnDoubleTapListener(this);
-
         //table = (ImageView) findViewById(R.id.table);
 
     }
@@ -107,7 +112,6 @@ public class GameActivity extends AppCompatActivity implements
     }
 
     private void isCupHit() {
-
         for (int i = 0; i < enemycups.size() ; i++) {
             float tempx = enemycups.get(i).getX();
             float tempy = enemycups.get(i).getY();
@@ -137,6 +141,7 @@ public class GameActivity extends AppCompatActivity implements
             @Override
             public void run() {
                 imageView.setImageResource(R.drawable.emptycup);
+                rankingUpdate();
             }
         }, 1000);
 
@@ -150,18 +155,23 @@ public class GameActivity extends AppCompatActivity implements
                 }
             }
         }, 3000);
-
-        rankingUpdate();
     }
 
     private void rankingUpdate() {
         ranking++;
-        //rankingText.setText(ranking);
-
+        rankingText.setText(String.valueOf(ranking));
+        totalHits =+ ranking;
+        getIntent().putExtra("y", totalHits);
+        //Toast.makeText(getApplicationContext(), "Total Hits: " + getIntent().getIntExtra("y", 0), Toast.LENGTH_SHORT)
+                //.show();
     }
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+        if(counter == 3){
+            ballOnEdge();
+        }
+        counter++;
         float maxFlingVelocity    = ViewConfiguration.get(getApplicationContext()).getScaledMaximumFlingVelocity();
         float velocityPercentX    = velocityX / maxFlingVelocity;          // the percent is a value in the range of (0, 1]
         float normalizedVelocityX = velocityPercentX * PIXELS_PER_SECOND;  // where PIXELS_PER_SECOND is a device-independent measurement
@@ -281,5 +291,9 @@ public class GameActivity extends AppCompatActivity implements
 
     }
 
+    public void ballOnEdge(){
+        Intent intent = new Intent(this, OnEdgeActivity.class);
+        startActivity(intent);
+    }
 
 }

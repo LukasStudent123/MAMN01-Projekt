@@ -3,6 +3,8 @@
     package="com.example.digipong">
 
     <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/logga"
@@ -10,7 +12,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.MyApplication">
-        <activity android:name=".RankActivity"></activity>
+        <activity android:name=".OnEdgeActivity"/>
+        <activity android:name=".RankActivity" />
         <activity android:name=".GameActivity" />
         <activity android:name=".StartActivity" />
         <activity android:name=".MainActivity">

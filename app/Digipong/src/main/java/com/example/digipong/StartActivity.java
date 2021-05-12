@@ -19,6 +19,7 @@ public class StartActivity extends AppCompatActivity {
     private ImageView btnPlay, btnRanking;
     private Button btnUser;
     public String name = "User1";
+    public int ranking = 0;
     private EditText editText;
 
     @Override
@@ -56,9 +57,9 @@ public class StartActivity extends AppCompatActivity {
         btnUser.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getApplicationContext(), "to be implemented...", Toast.LENGTH_SHORT)
-                        .show();
-                //openDialog();
+                //Toast.makeText(getApplicationContext(), "to be implemented...", Toast.LENGTH_SHORT)
+                        //.show();
+                openDialog();
             }
         });
 
@@ -67,11 +68,16 @@ public class StartActivity extends AppCompatActivity {
 
     public void startGame(){
         Intent intent = new Intent(this, GameActivity.class);
+        intent.putExtra("x", name);
+        intent.putExtra("y", ranking);
         startActivity(intent);
     }
 
+
     public void openRanking(){
         Intent intent = new Intent(this, RankActivity.class);
+        intent.putExtra("x", name);
+        intent.putExtra("y", ranking);
         startActivity(intent);
     }
 
@@ -91,8 +97,8 @@ public class StartActivity extends AppCompatActivity {
                 .show();
         editText = view.findViewById(R.id.username);
 
-        Toast.makeText(getApplicationContext(), name, Toast.LENGTH_SHORT)
-                .show();
+        //Toast.makeText(getApplicationContext(), name, Toast.LENGTH_SHORT)
+                //.show();
     }
 
 }
