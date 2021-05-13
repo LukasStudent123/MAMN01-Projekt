@@ -20,6 +20,7 @@ import android.os.Handler;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.util.Log;
+import android.util.Pair;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
@@ -41,6 +42,9 @@ public class GameActivity extends AppCompatActivity implements
     private ImageView table;
     private TextView rankingText;
     private List<ImageView> enemycups = new ArrayList<>();
+    private List<ImageView> playercups = new ArrayList<>();
+    private List<Point> enemycupspos = new ArrayList<>();
+    private List<Point> playercupspos = new ArrayList<>();
     private ImageView ball;
     private GestureDetectorCompat mDetector;
     private static final int MIN_DISTANCE_MOVED = 50;
@@ -58,6 +62,9 @@ public class GameActivity extends AppCompatActivity implements
     public static final float PIXELS_PER_SECOND = 10000;
     private MediaPlayer mediaPlayer;
     private int counter = 0;
+    private boolean p1turn = true;
+    private int p1score = 0;
+    private int p2score = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,6 +73,7 @@ public class GameActivity extends AppCompatActivity implements
         mediaPlayer = MediaPlayer.create(this, R.raw.onhit);
         ball = findViewById(R.id.pingpongball);
         addEnemyCups();
+        addPlayerCups();
 
         ranking = 0;
         rankingText = findViewById(R.id.score);
@@ -97,27 +105,84 @@ public class GameActivity extends AppCompatActivity implements
         enemycups.add(findViewById(R.id.enemycup6));
     }
 
+    private void addPlayerCups() {
+        playercups.add(findViewById(R.id.mycup4));
+        playercups.add(findViewById(R.id.mycup5));
+        playercups.add(findViewById(R.id.mycup6));
+        playercups.add(findViewById(R.id.mycup3));
+        playercups.add(findViewById(R.id.mycup2));
+        playercups.add(findViewById(R.id.mycup1));
+    }
+
+    private void addEnemyCupsPos() {
+        for (ImageView cup : enemycups) {
+            Point p = new Point(cup.getLeft(), cup.getTop());
+            enemycupspos.add(p);
+        }
+    }
+
+    private void addPlayerCupsPos() {
+        for (ImageView cup : playercups) {
+            Point p = new Point(cup.getLeft(), cup.getTop());
+            playercupspos.add(p);
+        }
+    }
+
     private int getRanking() {
         return ranking;
     }
 
     private void reset() {
-        Toast.makeText(getApplicationContext(), "You win!", Toast.LENGTH_SHORT)
+        String winner;
+        if (p1turn) {
+            winner = "Player 1";
+        } else {
+            winner = "Player 2";
+        }
+        Toast.makeText(getApplicationContext(), winner + " wins!", Toast.LENGTH_SHORT)
                 .show();
+        enemycups.clear();
+        playercups.clear();
+        enemycupspos.clear();
+        playercupspos.clear();
         addEnemyCups();
+        addPlayerCups();
+        addEnemyCupsPos();
+        addPlayerCupsPos();
         for (ImageView cup : enemycups) {
             cup.setImageResource(R.drawable.filledcup);
             cup.setVisibility(View.VISIBLE);
         }
         this.ranking = 0;
+        for (ImageView cup : playercups) {
+            cup.setImageResource(R.drawable.filledcup);
+            cup.setVisibility(View.VISIBLE);
+        }
+        p1score = 0;
+        p2score = 0;
+        p1turn = true;
     }
 
     private void isCupHit() {
-        for (int i = 0; i < enemycups.size() ; i++) {
-            float tempx = enemycups.get(i).getX();
-            float tempy = enemycups.get(i).getY();
-            int tempwidth = enemycups.get(i).getWidth();
-            int tempheight = enemycups.get(i).getHeight();
+        List<ImageView> cups;
+        List<Point> cupspos;
+        if (p1turn) {
+            cups = enemycups;
+            cupspos = enemycupspos;
+        } else {
+            cups = playercups;
+            cupspos = playercupspos;
+        }
+        for (int i = 0; i < cups.size() ; i++) {
+            if (cups.get(i).getVisibility() == View.INVISIBLE) {
+                continue;
+            }
+            //float tempx = cups.get(i).getX();
+            //float tempy = cups.get(i).getY();
+            float tempx = cupspos.get(i).x;
+            float tempy = cupspos.get(i).y;
+            int tempwidth = cups.get(i).getWidth();
+            int tempheight = cups.get(i).getHeight();
             int ballwidth = ball.getWidth();
             int ballheight = ball.getHeight();
             System.out.println("Bollens bredd : " + ball.getWidth());
@@ -126,11 +191,12 @@ public class GameActivity extends AppCompatActivity implements
                     && ballx + (ballwidth / 2) <= tempx + (tempwidth*0.75)
                     && bally + (ballheight / 2) >= tempy - (tempheight / 4)
                     && bally + (ballheight / 2) <= tempy + (tempheight*0.5)) {
-                cupIsHit(enemycups.get(i), i);
+                cupIsHit(cups.get(i), i);
                 mediaPlayer.start();
-                break;
+                return;
             }
         }
+        changePlayer();
     }
 
     private void cupIsHit(ImageView imageView, int i) {
@@ -142,20 +208,81 @@ public class GameActivity extends AppCompatActivity implements
             @Override
             public void run() {
                 imageView.setImageResource(R.drawable.emptycup);
-                rankingUpdate();
+                if (p1turn) {
+                    rankingUpdate();
+                }
             }
         }, 1000);
 
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                enemycups.get(i).setVisibility(View.INVISIBLE);
-                enemycups.remove(i);
-                if(enemycups.isEmpty()) {
+                List<ImageView> cups;
+                int score;
+                if (p1turn) {
+                    cups = enemycups;
+                    p1score++;
+                    score = p1score;
+                } else {
+                    cups = playercups;
+                    p2score++;
+                    score = p2score;
+                }
+                cups.get(i).setVisibility(View.INVISIBLE);
+                //cups.remove(i);
+                //cupspos.remove(i);
+                //if(cups.isEmpty()) {
+                if (score == 6) {
                     reset();
+                } else {
+                    changePlayer();
                 }
             }
         }, 3000);
+    }
+
+    private void changePlayer() {
+        String player;
+        if (!p1turn) {
+            player = "Player 1";
+        } else {
+            player = "Player 2";
+        }
+        Toast.makeText(getApplicationContext(), player + "'s turn!", Toast.LENGTH_SHORT)
+                .show();
+        for (int i = 0; i < 6; i ++) {
+            switchCupPos(enemycups.get(i), playercups.get(i), i, i);
+        }
+        /*switchCupPos(enemycups.get(0), playercups.get(3), 0, 3);
+        switchCupPos(enemycups.get(1), playercups.get(4), 1, 4);
+        switchCupPos(enemycups.get(2), playercups.get(5), 2, 5);
+        switchCupPos(enemycups.get(3), playercups.get(2), 3, 2);
+        switchCupPos(enemycups.get(4), playercups.get(1), 4, 1);
+        switchCupPos(enemycups.get(5), playercups.get(0), 5, 0);*/
+        p1turn = !p1turn;
+    }
+
+    private void switchCupPos(ImageView cup1, ImageView cup2, int idx1, int idx2) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            int x1 = enemycupspos.get(idx1).x;
+            int y1 = enemycupspos.get(idx1).y;
+            int x2 = playercupspos.get(idx2).x;
+            int y2 = playercupspos.get(idx2).y;
+            Path path = new Path();
+            path.moveTo(x1, y1);
+            path.lineTo(x2, y2);
+            Path path2 = new Path();
+            path2.moveTo(x2, y2);
+            path2.lineTo(x1, y1);
+            ObjectAnimator animator = ObjectAnimator.ofFloat(cup1, View.X, View.Y, path);
+            animator.setDuration(2000);
+            animator.start();
+            ObjectAnimator animator2 = ObjectAnimator.ofFloat(cup2, View.X, View.Y, path2);
+            animator2.setDuration(2000);
+            animator2.start();
+            enemycupspos.get(idx1).set(x2, y2);
+            playercupspos.get(idx2).set(x1, y1);
+        }
     }
 
     private void rankingUpdate() {
@@ -169,6 +296,10 @@ public class GameActivity extends AppCompatActivity implements
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+        if (enemycupspos.isEmpty() && playercupspos.isEmpty()) {
+            addEnemyCupsPos();
+            addPlayerCupsPos();
+        }
         if(counter == 3){
             ballOnEdge();
         }
@@ -201,35 +332,6 @@ public class GameActivity extends AppCompatActivity implements
         }, 2000);
 
         return true;
-
-
-        //maxTranslationX = mMainLayout.getWidth() - ball.getWidth();
-        //maxTranslationY = mMainLayout.getHeight() - ball.getHeight();
-
-        //downEvent : when user puts his finger down on the view
-        //moveEvent : when user lifts his finger at the end of the movement
-        //float distanceInX = Math.abs(moveEvent.getRawX() - downEvent.getRawX());
-        //float distanceInY = Math.abs(moveEvent.getRawY() - downEvent.getRawY());
-
-        //mTvFlingDistance.setText("distanceInX : " + distanceInX + "\n" + "distanceInY : " + distanceInY);
-
-        //if (distanceInX > MIN_DISTANCE_MOVED) {
-        //Fling Right/Left
-        //    FlingAnimation flingX = new FlingAnimation(ball, DynamicAnimation.TRANSLATION_X);
-        //    flingX.setStartVelocity(velocityX)
-        //.setMinValue(MIN_TRANSLATION) // minimum translationX property
-        //.setMaxValue(maxTranslationX)  // maximum translationX property
-        //.setFriction(FRICTION)
-        //            .start();
-        //} else if (distanceInY > MIN_DISTANCE_MOVED) {
-        //Fling Down/Up
-        //    FlingAnimation flingY = new FlingAnimation(ball, DynamicAnimation.TRANSLATION_Y);
-        //    flingY.setStartVelocity(velocityY)
-        //.setMinValue(MIN_TRANSLATION)  // minimum translationY property
-        //.setMaxValue(maxTranslationY) // maximum translationY property
-        //.setFriction(FRICTION)
-        //            .start();
-        //}
     }
 
     @Override
