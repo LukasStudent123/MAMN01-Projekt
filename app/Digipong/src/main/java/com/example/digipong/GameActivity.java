@@ -399,4 +399,9 @@ public class GameActivity extends AppCompatActivity implements
         startActivity(intent);
     }
 
+    public void drink(){
+        Intent intent = new Intent(this, DrinkingActivity.class);
+        startActivity(intent);
+    }
+
 }
