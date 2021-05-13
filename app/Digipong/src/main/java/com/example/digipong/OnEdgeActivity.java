@@ -5,10 +5,13 @@ import androidx.core.app.ActivityCompat;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
+import android.hardware.SensorManager;
 import android.media.AudioFormat;
 import android.media.AudioRecord;
+import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.Handler;
 import android.provider.MediaStore;
 import android.util.Log;
@@ -24,11 +27,16 @@ import org.w3c.dom.Text;
 import java.io.IOException;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class OnEdgeActivity extends AppCompatActivity {
     private MediaRecorder mediaRecorder;
     private Timer timer = new Timer();
     private ImageView cup;
+    private MediaPlayer mp;
+    private CountDownTimer cdt;
 
 
     @Override
@@ -36,6 +44,10 @@ public class OnEdgeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_onedge);
         cup = (ImageView) findViewById(R.id.cup);
+
+        mp = MediaPlayer.create(this, R.raw.spinning);
+        mp.start();
+
 /*
         if (ActivityCompat.checkSelfPermission(OnEdgeActivity(), Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
 
@@ -74,15 +86,24 @@ public class OnEdgeActivity extends AppCompatActivity {
          */
         //timer.schedule(new cupRotation(), 0, 500);
 
-        Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                    finish();
+
+        cdt = new CountDownTimer(3500, 500) {
+            public void onTick(long millisUntilFinished) {
+                if(millisUntilFinished%1000 == 0){
+                    cup.setImageResource(R.drawable.cupwithball);
+                } else {
+                    cup.setImageResource(R.drawable.cuprotation);
+                }
             }
-        }, 5000);
+            public void onFinish() {
+                mp.stop();
+                finish();
+            }
+        }.start();
 
     }
+
+    //https://www.codota.com/code/java/methods/android.media.MediaRecorder/getMaxAmplitude ??
 
     //https://gist.github.com/h4ck4life/6433506
     public boolean isBlowing() {
@@ -130,17 +151,12 @@ public class OnEdgeActivity extends AppCompatActivity {
         }
     }
 
-
-    class cupRotation extends TimerTask{
-        boolean b = true;
-        public void run() {
-            if(b) {
-                cup.setImageResource(R.drawable.cuprotation);
-                b = false;
-            } else {
-                cup.setImageResource(R.drawable.cupwithball);
-                b = true;
-            }
-        }
+    protected void onResume() {
+        super.onResume();
     }
+
+    protected void onPause() {
+        super.onPause();
+    }
+
 }
