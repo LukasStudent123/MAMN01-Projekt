@@ -109,6 +109,7 @@ public class GameActivity extends AppCompatActivity implements
             cup.setImageResource(R.drawable.filledcup);
             cup.setVisibility(View.VISIBLE);
         }
+        this.ranking = 0;
     }
 
     private void isCupHit() {
