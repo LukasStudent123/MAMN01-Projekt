@@ -18,7 +18,7 @@ import android.widget.Toast;
 public class StartActivity extends AppCompatActivity {
     private ImageView btnPlay, btnRanking;
     private Button btnUser;
-    public String name = "User1";
+    public String name = "Player 1";
     public int ranking = 0;
     private EditText editText;
 

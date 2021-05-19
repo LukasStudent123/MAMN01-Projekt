@@ -1,9 +1,12 @@
 package com.example.digipong;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.hardware.SensorManager;
 import android.media.AudioFormat;
@@ -12,7 +15,9 @@ import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.os.Debug;
 import android.os.Handler;
+import android.os.ParcelFileDescriptor;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
@@ -24,6 +29,7 @@ import android.widget.Toast;
 
 import org.w3c.dom.Text;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -32,110 +38,28 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 public class OnEdgeActivity extends AppCompatActivity {
-    private MediaRecorder mediaRecorder;
+    private MediaRecorder recorder;
     private Timer timer = new Timer();
     private ImageView cup;
     private MediaPlayer mp;
     private CountDownTimer cdt;
+    private static final int REQUEST_RECORD_AUDIO_PERMISSION = 200;
+    private static final int REQUEST_WRITE_EXTERNAL_STORAGE_PERMISSION = 100;
+    private static final String LOG_TAG = "AudioRecordTest";
+    private static String fileName = null;
 
+    // Requesting permission to RECORD_AUDIO
+    private boolean permissionToRecordAccepted = false;
+    private boolean permissionWriteExternalStorageAccepted = false;
+    private String [] permissions = {Manifest.permission.RECORD_AUDIO, Manifest.permission.WRITE_EXTERNAL_STORAGE};
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_onedge);
-        cup = (ImageView) findViewById(R.id.cup);
+    private ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
 
-        mp = MediaPlayer.create(this, R.raw.spinning);
-        mp.start();
+    private ParcelFileDescriptor[] descriptors;
+    private ParcelFileDescriptor parcelRead = new ParcelFileDescriptor(descriptors[0]);
+    private ParcelFileDescriptor parcelWrite = new ParcelFileDescriptor(descriptors[1]);
 
-/*
-        if (ActivityCompat.checkSelfPermission(OnEdgeActivity(), Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
-
-            ActivityCompat.requestPermissions(OnEdgeActivity(), new String[]{Manifest.permission.RECORD_AUDIO}, BuildDev.RECORD_AUDIO);
-
-        } else {
-
-            startRecording();
-
-        }
-
-        mediaRecorder = new MediaRecorder();
-        mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
-        mediaRecorder.setMaxDuration(1000);
-        try {
-            mediaRecorder.prepare();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        mediaRecorder.start();
-        int res = mediaRecorder.getMaxAmplitude();
-        Handler h = new Handler();
-        h.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                mediaRecorder.stop();
-            }
-        }, 5000);
-        */
-
-        /*
-        String blowing = String.valueOf(isBlowing());
-        Toast.makeText(getApplicationContext(), blowing , Toast.LENGTH_SHORT)
-                .show();
-
-         */
-        //timer.schedule(new cupRotation(), 0, 500);
-
-
-        cdt = new CountDownTimer(3500, 500) {
-            public void onTick(long millisUntilFinished) {
-                if(millisUntilFinished%1000 == 0){
-                    cup.setImageResource(R.drawable.cupwithball);
-                } else {
-                    cup.setImageResource(R.drawable.cuprotation);
-                }
-            }
-            public void onFinish() {
-                mp.stop();
-                finish();
-            }
-        }.start();
-
-    }
-
-    //https://www.codota.com/code/java/methods/android.media.MediaRecorder/getMaxAmplitude ??
-
-    //https://gist.github.com/h4ck4life/6433506
-    public boolean isBlowing() {
-        boolean recorder=true;
-
-        int minSize = AudioRecord.getMinBufferSize(8000, AudioFormat.CHANNEL_CONFIGURATION_MONO, AudioFormat.ENCODING_PCM_16BIT);
-        AudioRecord ar = new AudioRecord(MediaRecorder.AudioSource.MIC, 8000,AudioFormat.CHANNEL_CONFIGURATION_MONO, AudioFormat.ENCODING_PCM_16BIT,minSize);
-
-        short[] buffer = new short[minSize];
-
-        ar.startRecording();
-        while(recorder)
-        {
-            ar.read(buffer, 0, minSize);
-            for (short s : buffer) {
-                if (Math.abs(s) > 27000) {  //DETECT VOLUME (IF I BLOW IN THE MIC)
-                    int blow_value = Math.abs(s);
-
-                    Toast.makeText(getApplicationContext(), blow_value , Toast.LENGTH_LONG)
-                            .show();
-
-                    ar.stop();
-                    recorder=false;
-
-                    return true;
-                }
-            }
-        }
-        return false;
-
-    }
-
+    /*
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
         switch (requestCode) {
@@ -150,6 +74,113 @@ public class OnEdgeActivity extends AppCompatActivity {
             }
         }
     }
+     */
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        switch (requestCode){
+            case REQUEST_RECORD_AUDIO_PERMISSION:
+                permissionToRecordAccepted  = grantResults[0] == PackageManager.PERMISSION_GRANTED;
+                Log.d(LOG_TAG, "RecordAcc() OK");//
+                break;
+        }
+        if (!permissionToRecordAccepted ) finish();
+
+        switch (requestCode){
+            case REQUEST_WRITE_EXTERNAL_STORAGE_PERMISSION:
+                permissionWriteExternalStorageAccepted  = grantResults[1] == PackageManager.PERMISSION_GRANTED;
+                Log.d(LOG_TAG, "WriteAcc() OK");
+                break;
+        }
+        if (!permissionWriteExternalStorageAccepted ) finish();
+
+        Log.d(LOG_TAG, "grantResult" + grantResults[0] + grantResults[1]);
+    }
+
+
+    private void onRecord(boolean start) {
+        if (start) {
+            startRecording();
+        } else {
+            stopRecording();
+        }
+    }
+
+    private void startRecording() {
+        recorder = new MediaRecorder();
+        recorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+        recorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
+        try {
+            descriptors = ParcelFileDescriptor.createPipe();
+        } catch (IOException e) {
+            Log.e(LOG_TAG, "createPipe(): failed");
+        }
+        recorder.setOutputFile(parcelWrite.getFileDescriptor());
+        //recorder.setOutputFile(fileName);
+        recorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
+
+        try {
+            recorder.prepare();
+        } catch (IOException e) {
+            Log.e(LOG_TAG, "prepare() failed");
+        }
+
+        Log.e(LOG_TAG, "start() initialized");
+        recorder.start();
+
+    }
+
+    private void stopRecording() {
+        recorder.stop();
+        recorder.release();
+        recorder = null;
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_onedge);
+        cup = (ImageView) findViewById(R.id.cup);
+
+        ActivityCompat.requestPermissions(this, permissions, REQUEST_RECORD_AUDIO_PERMISSION);
+
+        mp = MediaPlayer.create(this, R.raw.spinning);
+        mp.start();
+
+        startRecording();
+        int i = recorder.getMaxAmplitude();
+        Log.i(LOG_TAG, "maxAmp" + i);
+
+
+        cdt = new CountDownTimer(3500, 500) {
+            public void onTick(long millisUntilFinished) {
+                if(millisUntilFinished%1000 == 0){
+                    cup.setImageResource(R.drawable.cupwithball);
+                } else {
+                    cup.setImageResource(R.drawable.cuprotation);
+                }
+            }
+            public void onFinish() {
+                mp.stop();
+                //stopRecording();
+                finish();
+            }
+        }.start();
+
+    }
+
+    //https://www.codota.com/code/java/methods/android.media.MediaRecorder/getMaxAmplitude ??
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (recorder != null) {
+            recorder.release();
+            recorder = null;
+        }
+    }
 
     protected void onResume() {
         super.onResume();
@@ -159,4 +190,18 @@ public class OnEdgeActivity extends AppCompatActivity {
         super.onPause();
     }
 
+    public static boolean hasPermissions(Context context, String... permissions) {
+        if (context != null && permissions != null) {
+            for (String permission : permissions) {
+                if (ActivityCompat.checkSelfPermission(context, permission) != PackageManager.PERMISSION_GRANTED) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
 }
+
+
+//timer.schedule(new cupRotation(), 0, 500);

@@ -65,6 +65,7 @@ public class GameActivity extends AppCompatActivity implements
     private boolean p1turn = true;
     private int p1score = 0;
     private int p2score = 0;
+    private String p1name;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,6 +80,7 @@ public class GameActivity extends AppCompatActivity implements
         rankingText = findViewById(R.id.score);
         totalHits = getIntent().getIntExtra("y", 0);
         getIntent().removeExtra("y");
+        p1name = getIntent().getStringExtra("x");
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
@@ -135,7 +137,7 @@ public class GameActivity extends AppCompatActivity implements
     private void reset() {
         String winner;
         if (p1turn) {
-            winner = "Player 1";
+            winner = p1name;
         } else {
             winner = "Player 2";
         }
@@ -244,7 +246,7 @@ public class GameActivity extends AppCompatActivity implements
     private void changePlayer() {
         String player;
         if (!p1turn) {
-            player = "Player 1";
+            player = p1name;
         } else {
             player = "Player 2";
         }
@@ -301,7 +303,9 @@ public class GameActivity extends AppCompatActivity implements
             addPlayerCupsPos();
         }
         if(counter == 3){
+            onPause();
             ballOnEdge();
+            onResume();
         }
         counter++;
         float maxFlingVelocity    = ViewConfiguration.get(getApplicationContext()).getScaledMaximumFlingVelocity();
