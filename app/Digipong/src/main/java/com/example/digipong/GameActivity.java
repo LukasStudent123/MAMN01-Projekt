@@ -5,14 +5,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.GestureDetectorCompat;
 
 import android.animation.ObjectAnimator;
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Path;
 import android.graphics.Point;
-import android.media.Image;
 import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Bundle;
@@ -20,14 +16,10 @@ import android.os.Handler;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
 import android.util.Log;
-import android.util.Pair;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
-import android.view.ViewManager;
-import android.view.animation.Animation;
-import android.view.animation.RotateAnimation;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -40,7 +32,8 @@ public class GameActivity extends AppCompatActivity implements
         GestureDetector.OnGestureListener,
         GestureDetector.OnDoubleTapListener {
     private ImageView table;
-    private TextView rankingText;
+    private TextView rankingTextRed;
+    private TextView rankingTextBlue;
     private List<ImageView> enemycups = new ArrayList<>();
     private List<ImageView> playercups = new ArrayList<>();
     private List<Point> enemycupspos = new ArrayList<>();
@@ -55,7 +48,8 @@ public class GameActivity extends AppCompatActivity implements
     private RelativeLayout mMainLayout;
     private float ballx;
     private float bally;
-    private int ranking;
+    private int ranking; // Borde vi byta namn till pointsRed?
+    private int pointsBlue;
     private int totalHits;
     private Vibrator vibrator;
     final Handler handler = new Handler();
@@ -76,7 +70,8 @@ public class GameActivity extends AppCompatActivity implements
         addPlayerCups();
 
         ranking = 0;
-        rankingText = findViewById(R.id.score);
+        rankingTextRed = findViewById(R.id.scoreRed);
+        rankingTextBlue = findViewById(R.id.scoreBlue);
         totalHits = getIntent().getIntExtra("y", 0);
         getIntent().removeExtra("y");
 
@@ -200,17 +195,26 @@ public class GameActivity extends AppCompatActivity implements
     }
 
     private void cupIsHit(ImageView imageView, int i) {
-        imageView.setImageResource(R.drawable.cupwithball);
+        int cupWithBall;
+        int emptyCup;
+        if(p1turn){
+            cupWithBall = R.drawable.blue_cupwithball;
+            emptyCup = R.drawable.blue_emptycup;
+        } else{
+            cupWithBall = R.drawable.cupwithball;
+            emptyCup = R.drawable.emptycup;
+        }
+
+        imageView.setImageResource(cupWithBall);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             vibrator.vibrate(VibrationEffect.createOneShot(500, VibrationEffect.DEFAULT_AMPLITUDE));
         }
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                imageView.setImageResource(R.drawable.emptycup);
-                if (p1turn) {
-                    rankingUpdate();
-                }
+                imageView.setImageResource(emptyCup);
+                rankingUpdate();
+
             }
         }, 1000);
 
@@ -286,12 +290,17 @@ public class GameActivity extends AppCompatActivity implements
     }
 
     private void rankingUpdate() {
-        ranking++;
-        rankingText.setText(String.valueOf(ranking));
-        totalHits =+ ranking;
-        getIntent().putExtra("y", totalHits);
-        //Toast.makeText(getApplicationContext(), "Total Hits: " + getIntent().getIntExtra("y", 0), Toast.LENGTH_SHORT)
-                //.show();
+        if(p1turn) {
+            ranking++;
+            rankingTextRed.setText(String.valueOf(ranking));
+            totalHits = +ranking;
+            getIntent().putExtra("y", totalHits);
+            //Toast.makeText(getApplicationContext(), "Total Hits: " + getIntent().getIntExtra("y", 0), Toast.LENGTH_SHORT)
+            //.show();
+        } else{
+            pointsBlue++;
+            rankingTextBlue.setText(String.valueOf(p2score));
+        }
     }
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
