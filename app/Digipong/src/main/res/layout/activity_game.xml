@@ -121,9 +121,6 @@
         app:srcCompat="@drawable/blue_filledcup"
         tools:ignore="MissingConstraints" />
 
-
-
-
     <ImageView
         android:id="@+id/mycup1"
         android:layout_width="83dp"
@@ -198,14 +195,15 @@
 
     <ImageView
         android:id="@+id/pingpongball"
-        android:layout_width="49dp"
-        android:layout_height="49dp"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
         android:layout_marginTop="92dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.524"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/mycup5"
         app:srcCompat="@drawable/ballwithborder"
+        android:layout_alignParentTop="true"
         tools:ignore="MissingConstraints" />
 
     <androidx.constraintlayout.widget.Guideline

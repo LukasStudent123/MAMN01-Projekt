@@ -2,6 +2,7 @@ package com.example.digipong;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.view.GestureDetectorCompat;
 
 import android.animation.ObjectAnimator;
@@ -60,11 +61,15 @@ public class GameActivity extends AppCompatActivity implements
     private int p1score = 0;
     private int p2score = 0;
 
+    private ConstraintLayout drinkLayout;
+    private boolean needToDrink = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
         mediaPlayer = MediaPlayer.create(this, R.raw.onhit);
+        drinkLayout = (ConstraintLayout) findViewById(R.id.drinkActivity);
         ball = findViewById(R.id.pingpongball);
         addEnemyCups();
         addPlayerCups();
@@ -188,6 +193,7 @@ public class GameActivity extends AppCompatActivity implements
                     && bally + (ballheight / 2) <= tempy + (tempheight*0.5)) {
                 cupIsHit(cups.get(i), i);
                 mediaPlayer.start();
+                needToDrink = true;
                 return;
             }
         }
@@ -264,6 +270,12 @@ public class GameActivity extends AppCompatActivity implements
         switchCupPos(enemycups.get(4), playercups.get(1), 4, 1);
         switchCupPos(enemycups.get(5), playercups.get(0), 5, 0);*/
         p1turn = !p1turn;
+        if(needToDrink) {
+            drink2();
+            if(drink2()) {
+                setContentView(R.layout.activity_game);
+            }
+        }
     }
 
     private void switchCupPos(ImageView cup1, ImageView cup2, int idx1, int idx2) {
@@ -310,7 +322,7 @@ public class GameActivity extends AppCompatActivity implements
             addPlayerCupsPos();
         }
         if(counter == 3){
-            ballOnEdge();
+            //ballOnEdge();
         }
         counter++;
         float maxFlingVelocity    = ViewConfiguration.get(getApplicationContext()).getScaledMaximumFlingVelocity();
@@ -402,10 +414,40 @@ public class GameActivity extends AppCompatActivity implements
     public void onLongPress(MotionEvent e) {
 
     }
-
+    /*
     public void ballOnEdge(){
         Intent intent = new Intent(this, OnEdgeActivity.class);
         startActivity(intent);
+    }
+    */
+
+    public void drink(){
+        Intent intent = new Intent(this, DrinkActivity.class);
+        startActivity(intent);
+    }
+
+    public boolean drink2() {
+        setContentView(R.layout.activity_drink);
+        return true;
+        /*if(mDetector.onTouchEvent(drinkLayout.onTouchEvent(drinkLayout.))) {
+            needToDrink = false;
+            return true;
+        } return false;
+
+         */
+
+        /*
+        drinkLayout.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                //return mDetector.onTouchEvent(event);
+                setContentView(R.layout.activity_game);
+                return true;
+            }
+        });
+       return false;
+
+         */
     }
 
 }
