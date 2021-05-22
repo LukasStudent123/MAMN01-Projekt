@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Handler;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class DrinkActivity extends AppCompatActivity implements SensorEventListener{
@@ -19,6 +20,7 @@ public class DrinkActivity extends AppCompatActivity implements SensorEventListe
     final Handler handler = new Handler();
     private SensorManager sm;
     private Sensor accSensor;
+    private TextView drinktext;
 
 
     @Override
@@ -33,6 +35,7 @@ public class DrinkActivity extends AppCompatActivity implements SensorEventListe
         setContentView(R.layout.activity_drink);
 
         cup = (ImageView) findViewById(R.id.cup);
+        drinktext = (TextView) findViewById(R.id.drinktext);
         mp = MediaPlayer.create(this, R.raw.drinking);
         mp.start();
 
@@ -44,21 +47,17 @@ public class DrinkActivity extends AppCompatActivity implements SensorEventListe
                 mp.stop();
                 finish();
             }
-        }, 5000);
+        }, 8000);
 
     }
 
     public void onSensorChanged(SensorEvent event) {
-        /*
         float zVal = event.values[2];
+        int z = Math.round((int) zVal);
         if(Math.round((double) zVal) < -5 ){
-            Toast.makeText(getApplicationContext(), "Drinking..." , Toast.LENGTH_LONG)
-                    .show();
+            drinktext.setText("Z: " + z);
         }
 
-         */
-        Toast.makeText(getApplicationContext(), "Drinking..." , Toast.LENGTH_SHORT)
-                .show();
     }
 
     @Override
