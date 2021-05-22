@@ -41,7 +41,8 @@ public class OnEdgeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_onedge);
         cup = (ImageView) findViewById(R.id.cup);
 
-        swirl = MediaPlayer.create(this, R.raw.blowing);
+        swirl = MediaPlayer.create(this, R.raw.swirl);
+        swirl.start();
 
         cdt = new CountDownTimer(3000, 500) {
             boolean b = false;
@@ -57,7 +58,7 @@ public class OnEdgeActivity extends AppCompatActivity {
             }
 
             public void onFinish() {
-                //swirl.stop();
+                swirl.stop();
                 finish();
             }
         }.start();
