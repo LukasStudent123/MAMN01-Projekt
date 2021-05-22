@@ -245,6 +245,17 @@ public class GameActivity extends AppCompatActivity implements
                 }
             }
         }, 5000);
+
+        /*
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                startDrink();
+            }
+        }, 6000);
+
+         */
+
     }
 
     private void changePlayer() {
@@ -311,6 +322,8 @@ public class GameActivity extends AppCompatActivity implements
             addEnemyCupsPos();
             addPlayerCupsPos();
         }
+
+        startDrink();
 
         //ballOnEdge();
 
@@ -407,6 +420,11 @@ public class GameActivity extends AppCompatActivity implements
 
     public void ballOnEdge(){
         Intent intent = new Intent(this, OnEdgeActivity.class);
+        startActivity(intent);
+    }
+
+    public void startDrink(){
+        Intent intent = new Intent(this, DrinkActivity.class);
         startActivity(intent);
     }
 
