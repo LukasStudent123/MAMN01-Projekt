@@ -76,8 +76,8 @@ public class StartActivity extends AppCompatActivity {
         Intent intent = new Intent(this, GameActivity.class);
         intent.putExtra("x", name);
         intent.putExtra("y", ranking);
-        startActivity(intent);
         mediaPlayer.stop();
+        startActivity(intent);
     }
 
 
