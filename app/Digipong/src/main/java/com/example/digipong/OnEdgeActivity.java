@@ -8,6 +8,9 @@ import androidx.core.content.ContextCompat;
 import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.media.AudioFormat;
 import android.media.AudioRecord;
@@ -20,6 +23,8 @@ import android.os.Handler;
 import android.os.ParcelFileDescriptor;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.view.MotionEvent;
+import android.view.VelocityTracker;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -37,12 +42,80 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-public class OnEdgeActivity extends AppCompatActivity {
+public class OnEdgeActivity extends AppCompatActivity implements View.OnLongClickListener {
     private MediaRecorder recorder;
     private Timer timer = new Timer();
     private ImageView cup;
-    private MediaPlayer mp;
+    private MediaPlayer swirl, blow;
     private CountDownTimer cdt;
+    final Handler handler = new Handler();
+    private static final String DEBUG_TAG = "Velocity";
+    private VelocityTracker mVelocityTracker = null;
+
+
+    protected void onResume() {
+        super.onResume();
+    }
+
+    protected void onPause() {
+        super.onPause();
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_onedge);
+
+        swirl = MediaPlayer.create(this, R.raw.spinning);
+
+        cup = (ImageView) findViewById(R.id.cup);
+        swirl.start();
+
+        cup.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                swirl.stop();
+                finish();
+            }
+        });
+
+        blow = MediaPlayer.create(this, R.raw.blowing);
+
+        //startRecording();
+        //int i = recorder.getMaxAmplitude();
+
+        cdt = new CountDownTimer(3500, 500) {
+            boolean b = false;
+
+            public void onTick(long millisUntilFinished) {
+                if (b == false) {
+                    cup.setImageResource(R.drawable.cuprotation);
+                    b = true;
+                } else if (b == true) {
+                    cup.setImageResource(R.drawable.cupwithball);
+                    b = false;
+                }
+            }
+
+            public void onFinish() {
+                swirl.stop();
+                finish();
+            }
+        }.start();
+
+    }
+
+    @Override
+    public boolean onLongClick(View v) {
+        return false;
+    }
+}
+
+
+
+//timer.schedule(new cupRotation(), 0, 500);
+
+/*
     private static final int REQUEST_RECORD_AUDIO_PERMISSION = 200;
     private static final int REQUEST_WRITE_EXTERNAL_STORAGE_PERMISSION = 100;
     private static final String LOG_TAG = "AudioRecordTest";
@@ -53,28 +126,6 @@ public class OnEdgeActivity extends AppCompatActivity {
     private boolean permissionWriteExternalStorageAccepted = false;
     private String [] permissions = {Manifest.permission.RECORD_AUDIO, Manifest.permission.WRITE_EXTERNAL_STORAGE};
 
-    private ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-
-    private ParcelFileDescriptor[] descriptors;
-    private ParcelFileDescriptor parcelRead = new ParcelFileDescriptor(descriptors[0]);
-    private ParcelFileDescriptor parcelWrite = new ParcelFileDescriptor(descriptors[1]);
-
-    /*
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
-        switch (requestCode) {
-            case 1234: {
-                // If request is cancelled, the result arrays are empty.
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    isBlowing();
-                } else {
-                    Log.d("TAG", "permission denied by user");
-                }
-                return;
-            }
-        }
-    }
-     */
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -83,20 +134,9 @@ public class OnEdgeActivity extends AppCompatActivity {
         switch (requestCode){
             case REQUEST_RECORD_AUDIO_PERMISSION:
                 permissionToRecordAccepted  = grantResults[0] == PackageManager.PERMISSION_GRANTED;
-                Log.d(LOG_TAG, "RecordAcc() OK");//
                 break;
         }
         if (!permissionToRecordAccepted ) finish();
-
-        switch (requestCode){
-            case REQUEST_WRITE_EXTERNAL_STORAGE_PERMISSION:
-                permissionWriteExternalStorageAccepted  = grantResults[1] == PackageManager.PERMISSION_GRANTED;
-                Log.d(LOG_TAG, "WriteAcc() OK");
-                break;
-        }
-        if (!permissionWriteExternalStorageAccepted ) finish();
-
-        Log.d(LOG_TAG, "grantResult" + grantResults[0] + grantResults[1]);
     }
 
 
@@ -112,13 +152,6 @@ public class OnEdgeActivity extends AppCompatActivity {
         recorder = new MediaRecorder();
         recorder.setAudioSource(MediaRecorder.AudioSource.MIC);
         recorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
-        try {
-            descriptors = ParcelFileDescriptor.createPipe();
-        } catch (IOException e) {
-            Log.e(LOG_TAG, "createPipe(): failed");
-        }
-        recorder.setOutputFile(parcelWrite.getFileDescriptor());
-        //recorder.setOutputFile(fileName);
         recorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
 
         try {
@@ -126,8 +159,6 @@ public class OnEdgeActivity extends AppCompatActivity {
         } catch (IOException e) {
             Log.e(LOG_TAG, "prepare() failed");
         }
-
-        Log.e(LOG_TAG, "start() initialized");
         recorder.start();
 
     }
@@ -145,13 +176,13 @@ public class OnEdgeActivity extends AppCompatActivity {
         cup = (ImageView) findViewById(R.id.cup);
 
         ActivityCompat.requestPermissions(this, permissions, REQUEST_RECORD_AUDIO_PERMISSION);
+        ActivityCompat.requestPermissions(this, permissions, REQUEST_WRITE_EXTERNAL_STORAGE_PERMISSION);
 
         mp = MediaPlayer.create(this, R.raw.spinning);
         mp.start();
 
-        startRecording();
-        int i = recorder.getMaxAmplitude();
-        Log.i(LOG_TAG, "maxAmp" + i);
+        //startRecording();
+        //int i = recorder.getMaxAmplitude();
 
 
         cdt = new CountDownTimer(3500, 500) {
@@ -201,7 +232,4 @@ public class OnEdgeActivity extends AppCompatActivity {
         return true;
     }
 
-}
-
-
-//timer.schedule(new cupRotation(), 0, 500);
+     */

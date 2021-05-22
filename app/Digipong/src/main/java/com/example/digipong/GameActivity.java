@@ -66,6 +66,7 @@ public class GameActivity extends AppCompatActivity implements
     private int p1score = 0;
     private int p2score = 0;
     private String p1name;
+    public int edgecup;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,6 +96,9 @@ public class GameActivity extends AppCompatActivity implements
         // listener.
         mDetector.setOnDoubleTapListener(this);
         //table = (ImageView) findViewById(R.id.table);
+
+        Toast.makeText(getApplicationContext(), "x & y val" + ball.getX() + ball.getY(), Toast.LENGTH_SHORT)
+                .show();
 
     }
 
@@ -176,6 +180,7 @@ public class GameActivity extends AppCompatActivity implements
             cupspos = playercupspos;
         }
         for (int i = 0; i < cups.size() ; i++) {
+            edgecup = i;
             if (cups.get(i).getVisibility() == View.INVISIBLE) {
                 continue;
             }
@@ -193,9 +198,21 @@ public class GameActivity extends AppCompatActivity implements
                     && ballx + (ballwidth / 2) <= tempx + (tempwidth*0.75)
                     && bally + (ballheight / 2) >= tempy - (tempheight / 4)
                     && bally + (ballheight / 2) <= tempy + (tempheight*0.5)) {
-                cupIsHit(cups.get(i), i);
-                mediaPlayer.start();
-                return;
+
+                ballOnEdge();
+
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        cupIsHit(cups.get(edgecup), edgecup);
+                        mediaPlayer.start();
+                        return;
+                    }
+                }, 3500);
+
+                //cupIsHit(cups.get(i), i);
+                //mediaPlayer.start();
+
             }
         }
         changePlayer();
@@ -243,6 +260,7 @@ public class GameActivity extends AppCompatActivity implements
         }, 3000);
     }
 
+    @SuppressLint("ResourceType")
     private void changePlayer() {
         String player;
         if (!p1turn) {
@@ -302,11 +320,12 @@ public class GameActivity extends AppCompatActivity implements
             addEnemyCupsPos();
             addPlayerCupsPos();
         }
-        if(counter == 3){
+        /*if(counter == 3){
             onPause();
             ballOnEdge();
             onResume();
         }
+         */
         counter++;
         float maxFlingVelocity    = ViewConfiguration.get(getApplicationContext()).getScaledMaximumFlingVelocity();
         float velocityPercentX    = velocityX / maxFlingVelocity;          // the percent is a value in the range of (0, 1]
@@ -334,7 +353,6 @@ public class GameActivity extends AppCompatActivity implements
                 bally = ball.getY();
                 isCupHit();            }
         }, 2000);
-
         return true;
     }
 
