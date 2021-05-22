@@ -7,8 +7,10 @@ import android.Manifest;
 import android.content.pm.PackageManager;
 import android.media.AudioFormat;
 import android.media.AudioRecord;
+import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.Handler;
 import android.provider.MediaStore;
 import android.util.Log;
@@ -29,6 +31,8 @@ public class OnEdgeActivity extends AppCompatActivity {
     private MediaRecorder mediaRecorder;
     private Timer timer = new Timer();
     private ImageView cup;
+    private CountDownTimer cdt;
+    private MediaPlayer swirl;
 
 
     @Override
@@ -37,7 +41,29 @@ public class OnEdgeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_onedge);
         cup = (ImageView) findViewById(R.id.cup);
 
+        swirl = MediaPlayer.create(this, R.raw.blowing);
 
+        cdt = new CountDownTimer(3000, 500) {
+            boolean b = false;
+
+            public void onTick(long millisUntilFinished) {
+                if (b == false) {
+                    cup.setImageResource(R.drawable.cuprotation);
+                    b = true;
+                } else if (b == true) {
+                    cup.setImageResource(R.drawable.cupwithball);
+                    b = false;
+                }
+            }
+
+            public void onFinish() {
+                //swirl.stop();
+                finish();
+            }
+        }.start();
+
+
+        /*
         Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             @Override
@@ -45,6 +71,8 @@ public class OnEdgeActivity extends AppCompatActivity {
                     finish();
             }
         }, 5000);
+
+         */
 
     }
 

@@ -187,7 +187,6 @@ public class GameActivity extends AppCompatActivity implements
                     && bally + (ballheight / 2) >= tempy - (tempheight / 4)
                     && bally + (ballheight / 2) <= tempy + (tempheight*0.5)) {
                 cupIsHit(cups.get(i), i);
-                mediaPlayer.start();
                 return;
             }
         }
@@ -209,14 +208,17 @@ public class GameActivity extends AppCompatActivity implements
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             vibrator.vibrate(VibrationEffect.createOneShot(500, VibrationEffect.DEFAULT_AMPLITUDE));
         }
+        ballOnEdge();
+
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
                 imageView.setImageResource(emptyCup);
+                mediaPlayer.start();
                 rankingUpdate();
 
             }
-        }, 1000);
+        }, 4000);
 
         handler.postDelayed(new Runnable() {
             @Override
@@ -242,7 +244,7 @@ public class GameActivity extends AppCompatActivity implements
                     changePlayer();
                 }
             }
-        }, 3000);
+        }, 5000);
     }
 
     private void changePlayer() {
@@ -309,9 +311,9 @@ public class GameActivity extends AppCompatActivity implements
             addEnemyCupsPos();
             addPlayerCupsPos();
         }
-        if(counter == 3){
-            ballOnEdge();
-        }
+
+        //ballOnEdge();
+
         counter++;
         float maxFlingVelocity    = ViewConfiguration.get(getApplicationContext()).getScaledMaximumFlingVelocity();
         float velocityPercentX    = velocityX / maxFlingVelocity;          // the percent is a value in the range of (0, 1]
