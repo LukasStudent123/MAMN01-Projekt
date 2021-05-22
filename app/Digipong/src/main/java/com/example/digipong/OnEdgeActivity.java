@@ -36,43 +36,7 @@ public class OnEdgeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_onedge);
         cup = (ImageView) findViewById(R.id.cup);
-/*
-        if (ActivityCompat.checkSelfPermission(OnEdgeActivity(), Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
 
-            ActivityCompat.requestPermissions(OnEdgeActivity(), new String[]{Manifest.permission.RECORD_AUDIO}, BuildDev.RECORD_AUDIO);
-
-        } else {
-
-            startRecording();
-
-        }
-
-        mediaRecorder = new MediaRecorder();
-        mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
-        mediaRecorder.setMaxDuration(1000);
-        try {
-            mediaRecorder.prepare();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        mediaRecorder.start();
-        int res = mediaRecorder.getMaxAmplitude();
-        Handler h = new Handler();
-        h.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                mediaRecorder.stop();
-            }
-        }, 5000);
-        */
-
-        /*
-        String blowing = String.valueOf(isBlowing());
-        Toast.makeText(getApplicationContext(), blowing , Toast.LENGTH_SHORT)
-                .show();
-
-         */
-        //timer.schedule(new cupRotation(), 0, 500);
 
         Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
@@ -84,6 +48,7 @@ public class OnEdgeActivity extends AppCompatActivity {
 
     }
 
+    /*
     //https://gist.github.com/h4ck4life/6433506
     public boolean isBlowing() {
         boolean recorder=true;
@@ -143,4 +108,45 @@ public class OnEdgeActivity extends AppCompatActivity {
             }
         }
     }
+
+     */
 }
+
+
+/*
+        if (ActivityCompat.checkSelfPermission(OnEdgeActivity(), Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+
+            ActivityCompat.requestPermissions(OnEdgeActivity(), new String[]{Manifest.permission.RECORD_AUDIO}, BuildDev.RECORD_AUDIO);
+
+        } else {
+
+            startRecording();
+
+        }
+
+        mediaRecorder = new MediaRecorder();
+        mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+        mediaRecorder.setMaxDuration(1000);
+        try {
+            mediaRecorder.prepare();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        mediaRecorder.start();
+        int res = mediaRecorder.getMaxAmplitude();
+        Handler h = new Handler();
+        h.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                mediaRecorder.stop();
+            }
+        }, 5000);
+        */
+
+        /*
+        String blowing = String.valueOf(isBlowing());
+        Toast.makeText(getApplicationContext(), blowing , Toast.LENGTH_SHORT)
+                .show();
+
+         */
+//timer.schedule(new cupRotation(), 0, 500);
