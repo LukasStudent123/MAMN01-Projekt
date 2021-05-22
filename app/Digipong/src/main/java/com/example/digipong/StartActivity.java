@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,10 +22,13 @@ public class StartActivity extends AppCompatActivity {
     public String name = "User1";
     public int ranking = 0;
     private EditText editText;
+    private MediaPlayer mediaPlayer;
+
 
     @Override
     protected void onResume() {
         super.onResume();
+        mediaPlayer.start();
     }
 
     @Override
@@ -36,6 +40,8 @@ public class StartActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_start);
+        mediaPlayer = MediaPlayer.create(this, R.raw.backgroundgame);
+        mediaPlayer.start();
 
         btnPlay = (ImageView) findViewById(R.id.imgPlay);
         btnPlay.setOnClickListener(new View.OnClickListener() {
@@ -71,6 +77,7 @@ public class StartActivity extends AppCompatActivity {
         intent.putExtra("x", name);
         intent.putExtra("y", ranking);
         startActivity(intent);
+        mediaPlayer.stop();
     }
 
 
