@@ -46,7 +46,7 @@ public class OnEdgeActivity extends AppCompatActivity implements View.OnLongClic
     private MediaRecorder recorder;
     private Timer timer = new Timer();
     private ImageView cup;
-    private MediaPlayer swirl, blow;
+    private MediaPlayer swirl;
     private CountDownTimer cdt;
     final Handler handler = new Handler();
     private static final String DEBUG_TAG = "Velocity";
@@ -78,8 +78,6 @@ public class OnEdgeActivity extends AppCompatActivity implements View.OnLongClic
                 finish();
             }
         });
-
-        blow = MediaPlayer.create(this, R.raw.blowing);
 
         //startRecording();
         //int i = recorder.getMaxAmplitude();

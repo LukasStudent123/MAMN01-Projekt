@@ -67,6 +67,7 @@ public class GameActivity extends AppCompatActivity implements
     private int p2score = 0;
     private String p1name;
     public int edgecup;
+    public boolean playerchange = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -206,7 +207,7 @@ public class GameActivity extends AppCompatActivity implements
                     public void run() {
                         cupIsHit(cups.get(edgecup), edgecup);
                         mediaPlayer.start();
-                        return;
+                        playerchange = false;
                     }
                 }, 3500);
 
@@ -214,8 +215,16 @@ public class GameActivity extends AppCompatActivity implements
                 //mediaPlayer.start();
 
             }
+
         }
-        changePlayer();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                changePlayer();
+            }
+        }, 5000);
+
+
     }
 
     private void cupIsHit(ImageView imageView, int i) {
@@ -254,7 +263,7 @@ public class GameActivity extends AppCompatActivity implements
                 if (score == 6) {
                     reset();
                 } else {
-                    changePlayer();
+                    //changePlayer();
                 }
             }
         }, 3000);
@@ -262,6 +271,7 @@ public class GameActivity extends AppCompatActivity implements
 
     @SuppressLint("ResourceType")
     private void changePlayer() {
+        playerchange = true;
         String player;
         if (!p1turn) {
             player = p1name;
