@@ -59,6 +59,9 @@ public class GameActivity extends AppCompatActivity implements
     private boolean p1turn = true;
     private int p1score = 0;
     private int p2score = 0;
+    private String p1name;
+    public int edgecup;
+    public boolean playerchange = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,6 +77,7 @@ public class GameActivity extends AppCompatActivity implements
         rankingTextBlue = findViewById(R.id.scoreBlue);
         totalHits = getIntent().getIntExtra("y", 0);
         getIntent().removeExtra("y");
+        p1name = getIntent().getStringExtra("x");
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
@@ -88,6 +92,9 @@ public class GameActivity extends AppCompatActivity implements
         // listener.
         mDetector.setOnDoubleTapListener(this);
         //table = (ImageView) findViewById(R.id.table);
+
+        Toast.makeText(getApplicationContext(), "x & y val" + ball.getX() + ball.getY(), Toast.LENGTH_SHORT)
+                .show();
 
     }
 
@@ -130,7 +137,7 @@ public class GameActivity extends AppCompatActivity implements
     private void reset() {
         String winner;
         if (p1turn) {
-            winner = "Player 1";
+            winner = p1name;
         } else {
             winner = "Player 2";
         }
@@ -169,6 +176,7 @@ public class GameActivity extends AppCompatActivity implements
             cupspos = playercupspos;
         }
         for (int i = 0; i < cups.size() ; i++) {
+            edgecup = i;
             if (cups.get(i).getVisibility() == View.INVISIBLE) {
                 continue;
             }
@@ -186,12 +194,32 @@ public class GameActivity extends AppCompatActivity implements
                     && ballx + (ballwidth / 2) <= tempx + (tempwidth*0.75)
                     && bally + (ballheight / 2) >= tempy - (tempheight / 4)
                     && bally + (ballheight / 2) <= tempy + (tempheight*0.5)) {
-                cupIsHit(cups.get(i), i);
-                mediaPlayer.start();
-                return;
+
+                ballOnEdge();
+
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        cupIsHit(cups.get(edgecup), edgecup);
+                        mediaPlayer.start();
+                        playerchange = false;
+                    }
+                }, 3500);
+
+                //cupIsHit(cups.get(i), i);
+                //mediaPlayer.start();
+
             }
+
         }
-        changePlayer();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                changePlayer();
+            }
+        }, 5000);
+
+
     }
 
     private void cupIsHit(ImageView imageView, int i) {
@@ -239,16 +267,18 @@ public class GameActivity extends AppCompatActivity implements
                 if (score == 6) {
                     reset();
                 } else {
-                    changePlayer();
+                    //changePlayer();
                 }
             }
         }, 3000);
     }
 
+    @SuppressLint("ResourceType")
     private void changePlayer() {
+        playerchange = true;
         String player;
         if (!p1turn) {
-            player = "Player 1";
+            player = p1name;
         } else {
             player = "Player 2";
         }
@@ -309,9 +339,12 @@ public class GameActivity extends AppCompatActivity implements
             addEnemyCupsPos();
             addPlayerCupsPos();
         }
-        if(counter == 3){
+        /*if(counter == 3){
+            onPause();
             ballOnEdge();
+            onResume();
         }
+         */
         counter++;
         float maxFlingVelocity    = ViewConfiguration.get(getApplicationContext()).getScaledMaximumFlingVelocity();
         float velocityPercentX    = velocityX / maxFlingVelocity;          // the percent is a value in the range of (0, 1]
@@ -339,7 +372,6 @@ public class GameActivity extends AppCompatActivity implements
                 bally = ball.getY();
                 isCupHit();            }
         }, 2000);
-
         return true;
     }
 
@@ -405,6 +437,11 @@ public class GameActivity extends AppCompatActivity implements
 
     public void ballOnEdge(){
         Intent intent = new Intent(this, OnEdgeActivity.class);
+        startActivity(intent);
+    }
+
+    public void drink(){
+        Intent intent = new Intent(this, DrinkingActivity.class);
         startActivity(intent);
     }
 

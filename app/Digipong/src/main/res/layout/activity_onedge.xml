@@ -34,6 +34,7 @@
         android:layout_width="346dp"
         android:layout_height="517dp"
         android:rotationY="180"
+        android:clickable="true"
         app:layout_constraintBottom_toTopOf="@+id/imageView6"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.492"
