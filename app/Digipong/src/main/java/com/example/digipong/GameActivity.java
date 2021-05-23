@@ -1,14 +1,23 @@
 package com.example.digipong;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.GestureDetectorCompat;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
+import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Path;
 import android.graphics.Point;
+import android.media.Image;
 import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Bundle;
@@ -31,7 +40,6 @@ import java.util.List;
 public class GameActivity extends AppCompatActivity implements
         GestureDetector.OnGestureListener,
         GestureDetector.OnDoubleTapListener {
-    private ImageView table;
     private TextView rankingTextRed;
     private TextView rankingTextBlue;
     private List<ImageView> enemycups = new ArrayList<>();
@@ -40,12 +48,6 @@ public class GameActivity extends AppCompatActivity implements
     private List<Point> playercupspos = new ArrayList<>();
     private ImageView ball;
     private GestureDetectorCompat mDetector;
-    private static final int MIN_DISTANCE_MOVED = 50;
-    private static final float MIN_TRANSLATION = 0;
-    private static final float FRICTION = 1.1f;
-    private int maxTranslationX;
-    private int maxTranslationY;
-    private RelativeLayout mMainLayout;
     private float ballx;
     private float bally;
     private int ranking; // Borde vi byta namn till pointsRed?
@@ -55,13 +57,18 @@ public class GameActivity extends AppCompatActivity implements
     final Handler handler = new Handler();
     public static final float PIXELS_PER_SECOND = 10000;
     private MediaPlayer mediaPlayer;
-    private int counter = 0;
     private boolean p1turn = true;
     private int p1score = 0;
     private int p2score = 0;
     private String p1name;
     public int edgecup;
     public boolean playerchange = true;
+    private float currentballx;
+    private float currentbally;
+    private ActivityResultLauncher<Intent> mGetContent;
+    private int throwLimit = 0;
+
+    private boolean isCheating = false; //sätt denna till true om ni vill göra spelet lättare vid testning
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,6 +78,12 @@ public class GameActivity extends AppCompatActivity implements
         ball = findViewById(R.id.pingpongball);
         addEnemyCups();
         addPlayerCups();
+        for (ImageView cup : enemycups) {
+            cup.setAlpha(1f);
+        }
+        for (ImageView cup : playercups) {
+            cup.setAlpha(0.5f);
+        }
 
         ranking = 0;
         rankingTextRed = findViewById(R.id.scoreRed);
@@ -83,19 +96,24 @@ public class GameActivity extends AppCompatActivity implements
             vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
         }
 
-        //mMainLayout = (RelativeLayout) findViewById(R.layout.activity_game);
-        // Instantiate the gesture detector with the
-        // application context and an implementation of
-        // GestureDetector.OnGestureListener
         mDetector = new GestureDetectorCompat(this,this);
-        // Set the gesture detector as the double tap
-        // listener.
         mDetector.setOnDoubleTapListener(this);
-        //table = (ImageView) findViewById(R.id.table);
 
         Toast.makeText(getApplicationContext(), "x & y val" + ball.getX() + ball.getY(), Toast.LENGTH_SHORT)
                 .show();
 
+        mGetContent = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
+                new ActivityResultCallback<ActivityResult>() {
+                    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+                    @Override
+                    public void onActivityResult(ActivityResult result) {
+                        if (result.getResultCode() == Activity.RESULT_OK) {
+                            Intent data = result.getData();
+                            boolean res = data.getBooleanExtra("result", true);
+                            onEdgeFinish(res);
+                        }
+                    }
+                });
     }
 
     private void addEnemyCups() {
@@ -134,6 +152,7 @@ public class GameActivity extends AppCompatActivity implements
         return ranking;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     private void reset() {
         String winner;
         if (p1turn) {
@@ -152,19 +171,28 @@ public class GameActivity extends AppCompatActivity implements
         addEnemyCupsPos();
         addPlayerCupsPos();
         for (ImageView cup : enemycups) {
-            cup.setImageResource(R.drawable.filledcup);
+            cup.setImageResource(R.drawable.blue_filledcup);
             cup.setVisibility(View.VISIBLE);
+            cup.setAlpha(1f);
         }
         this.ranking = 0;
         for (ImageView cup : playercups) {
             cup.setImageResource(R.drawable.filledcup);
             cup.setVisibility(View.VISIBLE);
+            cup.setAlpha(0.5f);
         }
         p1score = 0;
         p2score = 0;
         p1turn = true;
+        Path path = new Path();
+        path.moveTo(currentballx, currentbally);
+        path.lineTo(ballx, bally);
+        ObjectAnimator animator = ObjectAnimator.ofFloat(ball, View.X, View.Y, path);
+        animator.setDuration(1000);
+        animator.start();
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     private void isCupHit() {
         List<ImageView> cups;
         List<Point> cupspos;
@@ -176,12 +204,9 @@ public class GameActivity extends AppCompatActivity implements
             cupspos = playercupspos;
         }
         for (int i = 0; i < cups.size() ; i++) {
-            edgecup = i;
             if (cups.get(i).getVisibility() == View.INVISIBLE) {
                 continue;
             }
-            //float tempx = cups.get(i).getX();
-            //float tempy = cups.get(i).getY();
             float tempx = cupspos.get(i).x;
             float tempy = cupspos.get(i).y;
             int tempwidth = cups.get(i).getWidth();
@@ -190,36 +215,34 @@ public class GameActivity extends AppCompatActivity implements
             int ballheight = ball.getHeight();
             System.out.println("Bollens bredd : " + ball.getWidth());
 
-            if(ballx + (ballwidth / 2) >= tempx + (tempwidth / 4)
-                    && ballx + (ballwidth / 2) <= tempx + (tempwidth*0.75)
-                    && bally + (ballheight / 2) >= tempy - (tempheight / 4)
-                    && bally + (ballheight / 2) <= tempy + (tempheight*0.5)) {
+            if (currentballx + (ballwidth / 2) >= tempx + (tempwidth / 4)
+                    && currentballx + (ballwidth / 2) <= tempx + (tempwidth * 0.75)
+                    && currentbally + (ballheight / 2) >= tempy - (tempheight / 4)
+                    && currentbally + (ballheight / 2) <= tempy + (tempheight * 0.5)) {
 
+                edgecup = i;
                 ballOnEdge();
-
-                handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        cupIsHit(cups.get(edgecup), edgecup);
-                        mediaPlayer.start();
-                        playerchange = false;
-                    }
-                }, 3500);
-
-                //cupIsHit(cups.get(i), i);
-                //mediaPlayer.start();
-
+                return;
             }
 
         }
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
+        changePlayer();
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    protected void onEdgeFinish(boolean result) {
+            if (result) {
+                List<ImageView> cups;
+                if (p1turn) {
+                    cups = enemycups;
+                } else {
+                    cups = playercups;
+                }
+                cupIsHit(cups.get(edgecup), edgecup);
+                mediaPlayer.start();
+            } else {
                 changePlayer();
             }
-        }, 5000);
-
-
     }
 
     private void cupIsHit(ImageView imageView, int i) {
@@ -241,12 +264,11 @@ public class GameActivity extends AppCompatActivity implements
             @Override
             public void run() {
                 imageView.setImageResource(emptyCup);
-                rankingUpdate();
-
             }
         }, 1000);
 
         handler.postDelayed(new Runnable() {
+            @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
             @Override
             public void run() {
                 List<ImageView> cups;
@@ -260,22 +282,24 @@ public class GameActivity extends AppCompatActivity implements
                     p2score++;
                     score = p2score;
                 }
+                rankingUpdate();
                 cups.get(i).setVisibility(View.INVISIBLE);
-                //cups.remove(i);
-                //cupspos.remove(i);
-                //if(cups.isEmpty()) {
                 if (score == 6) {
                     reset();
                 } else {
-                    //changePlayer();
+                    changePlayer();
                 }
             }
         }, 3000);
+
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @SuppressLint("ResourceType")
     private void changePlayer() {
         playerchange = true;
+        List<ImageView> transparentcups;
+        List<ImageView> nottransparentcups;
         String player;
         if (!p1turn) {
             player = p1name;
@@ -287,13 +311,27 @@ public class GameActivity extends AppCompatActivity implements
         for (int i = 0; i < 6; i ++) {
             switchCupPos(enemycups.get(i), playercups.get(i), i, i);
         }
-        /*switchCupPos(enemycups.get(0), playercups.get(3), 0, 3);
-        switchCupPos(enemycups.get(1), playercups.get(4), 1, 4);
-        switchCupPos(enemycups.get(2), playercups.get(5), 2, 5);
-        switchCupPos(enemycups.get(3), playercups.get(2), 3, 2);
-        switchCupPos(enemycups.get(4), playercups.get(1), 4, 1);
-        switchCupPos(enemycups.get(5), playercups.get(0), 5, 0);*/
         p1turn = !p1turn;
+        if (p1turn) {
+            transparentcups = playercups;
+            nottransparentcups = enemycups;
+        } else {
+            transparentcups = enemycups;
+            nottransparentcups = playercups;
+        }
+        for (ImageView cup : transparentcups) {
+            cup.setAlpha(0.5f);
+        }
+        for (ImageView cup : nottransparentcups) {
+            cup.setAlpha(1f);
+        }
+        Path path = new Path();
+        path.moveTo(currentballx, currentbally);
+        path.lineTo(ballx, bally);
+        ObjectAnimator animator = ObjectAnimator.ofFloat(ball, View.X, View.Y, path);
+        animator.setDuration(1000);
+        animator.start();
+
     }
 
     private void switchCupPos(ImageView cup1, ImageView cup2, int idx1, int idx2) {
@@ -338,14 +376,11 @@ public class GameActivity extends AppCompatActivity implements
         if (enemycupspos.isEmpty() && playercupspos.isEmpty()) {
             addEnemyCupsPos();
             addPlayerCupsPos();
+            throwLimit = playercups.get(5).getTop();
         }
-        /*if(counter == 3){
-            onPause();
-            ballOnEdge();
-            onResume();
+        if (e2.getY() < throwLimit && !isCheating) {
+            return true;
         }
-         */
-        counter++;
         float maxFlingVelocity    = ViewConfiguration.get(getApplicationContext()).getScaledMaximumFlingVelocity();
         float velocityPercentX    = velocityX / maxFlingVelocity;          // the percent is a value in the range of (0, 1]
         float normalizedVelocityX = velocityPercentX * PIXELS_PER_SECOND;  // where PIXELS_PER_SECOND is a device-independent measurement
@@ -353,6 +388,10 @@ public class GameActivity extends AppCompatActivity implements
         float normalizedVelocityY = velocityPercentY * PIXELS_PER_SECOND;  // where PIXELS_PER_SECOND is a device-independent measurement
         int ballwidth = ball.getWidth();
         int ballheight = ball.getHeight();
+        ballx = ball.getX();
+        bally = ball.getY();
+        currentballx = e2.getX() + (normalizedVelocityX) - (ballwidth / 2);
+        currentbally = e2.getY() + (normalizedVelocityY) - ballheight - 150;
         System.out.println("fling");
         Log.v("speed", "velocityX: " + String.valueOf(velocityX) + " velocityY: " + String.valueOf(velocityY));
         Path path = new Path();
@@ -368,10 +407,10 @@ public class GameActivity extends AppCompatActivity implements
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                ballx = ball.getX();
-                bally = ball.getY();
-                isCupHit();            }
+                isCupHit();
+            }
         }, 2000);
+
         return true;
     }
 
@@ -436,8 +475,10 @@ public class GameActivity extends AppCompatActivity implements
     }
 
     public void ballOnEdge(){
-        Intent intent = new Intent(this, OnEdgeActivity.class);
-        startActivity(intent);
+        Intent intent = new Intent(this,
+                OnEdgeActivity.class);
+        intent.putExtra("p1turn", p1turn);
+        mGetContent.launch(intent);
     }
 
     public void drink(){

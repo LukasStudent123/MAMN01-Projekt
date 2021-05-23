@@ -6,7 +6,9 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -71,10 +73,18 @@ public class OnEdgeActivity extends AppCompatActivity implements View.OnLongClic
         cup = (ImageView) findViewById(R.id.cup);
         swirl.start();
 
+        boolean p1turn = getIntent().getBooleanExtra("p1turn", true);
+        if(p1turn) {
+            //cup.setImageResource(bild på blå mugg)
+        }
+
         cup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 swirl.stop();
+                Intent resultIntent = getIntent();
+                resultIntent.putExtra("result", true);
+                setResult(Activity.RESULT_OK, resultIntent);
                 finish();
             }
         });
@@ -97,6 +107,9 @@ public class OnEdgeActivity extends AppCompatActivity implements View.OnLongClic
 
             public void onFinish() {
                 swirl.stop();
+                Intent resultIntent = getIntent();
+                resultIntent.putExtra("result", false);
+                setResult(Activity.RESULT_OK, resultIntent);
                 finish();
             }
         }.start();

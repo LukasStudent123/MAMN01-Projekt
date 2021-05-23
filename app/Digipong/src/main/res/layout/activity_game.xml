@@ -53,8 +53,8 @@
 
     <ImageView
         android:id="@+id/enemycup1"
-        android:layout_width="79dp"
-        android:layout_height="110dp"
+        android:layout_width="83dp"
+        android:layout_height="80dp"
         android:layout_marginLeft="116dp"
         app:layout_constraintEnd_toStartOf="@+id/enemycup2"
         app:layout_constraintHorizontal_bias="1.0"
@@ -65,8 +65,8 @@
 
     <ImageView
         android:id="@+id/enemycup2"
-        android:layout_width="79dp"
-        android:layout_height="110dp"
+        android:layout_width="83dp"
+        android:layout_height="80dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
         app:layout_constraintEnd_toStartOf="@+id/enemycup3"
@@ -76,8 +76,8 @@
 
     <ImageView
         android:id="@+id/enemycup3"
-        android:layout_width="79dp"
-        android:layout_height="110dp"
+        android:layout_width="83dp"
+        android:layout_height="80dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.743"
         app:layout_constraintStart_toStartOf="parent"
@@ -87,8 +87,8 @@
 
     <ImageView
         android:id="@+id/enemycup5"
-        android:layout_width="79dp"
-        android:layout_height="110dp"
+        android:layout_width="83dp"
+        android:layout_height="80dp"
         android:layout_marginTop="50dp"
         android:layout_marginEnd="120dp"
         android:layout_marginRight="120dp"
@@ -99,8 +99,8 @@
 
     <ImageView
         android:id="@+id/enemycup4"
-        android:layout_width="79dp"
-        android:layout_height="110dp"
+        android:layout_width="83dp"
+        android:layout_height="80dp"
         android:layout_marginTop="50dp"
         app:layout_constraintEnd_toStartOf="@+id/enemycup5"
         app:layout_constraintHorizontal_bias="0.992"
@@ -111,8 +111,8 @@
 
     <ImageView
         android:id="@+id/enemycup6"
-        android:layout_width="79dp"
-        android:layout_height="110dp"
+        android:layout_width="83dp"
+        android:layout_height="80dp"
         android:layout_marginTop="100dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.509"
