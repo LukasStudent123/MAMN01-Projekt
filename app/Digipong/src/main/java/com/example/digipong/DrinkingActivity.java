@@ -61,11 +61,6 @@ public class DrinkingActivity extends AppCompatActivity implements SensorEventLi
         } else{
             cup.setImageResource(R.drawable.filledcup);
         }
-
-
-
-        //Toast.makeText(getApplicationContext(), "P1: " + p1turn , Toast.LENGTH_SHORT)
-                //.show();
     }
 
     @Override
@@ -108,6 +103,7 @@ public class DrinkingActivity extends AppCompatActivity implements SensorEventLi
             handler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
+                    mp.stop();
                     finish();
                 }
             }, 7000);

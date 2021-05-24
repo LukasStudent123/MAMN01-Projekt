@@ -78,7 +78,6 @@ public class OnEdgeActivity extends AppCompatActivity implements View.OnLongClic
         int onEdge_right;
         if(p1turn) {
             //cup.setImageResource(bild på blå mugg)
-
             onEdge = R.drawable.blue_onedge;
             onEdge_right = R.drawable.blue_onedge_right;
         } else{
@@ -86,6 +85,19 @@ public class OnEdgeActivity extends AppCompatActivity implements View.OnLongClic
             onEdge_right = R.drawable.onedge_right;
         }
 
+        cup.setOnLongClickListener(new View.OnLongClickListener(){
+
+            @Override
+            public boolean onLongClick(View v) {
+                swirl.stop();
+                Intent resultIntent = getIntent();
+                resultIntent.putExtra("result", true);
+                setResult(Activity.RESULT_OK, resultIntent);
+                finish();
+                return true;
+            }
+        });
+        /*
         cup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -96,6 +108,8 @@ public class OnEdgeActivity extends AppCompatActivity implements View.OnLongClic
                 finish();
             }
         });
+
+         */
 
         //startRecording();
         //int i = recorder.getMaxAmplitude();
