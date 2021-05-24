@@ -58,7 +58,7 @@ public class GameActivity extends AppCompatActivity implements
     private Vibrator vibrator;
     final Handler handler = new Handler();
     public static final float PIXELS_PER_SECOND = 10000;
-    private MediaPlayer mediaPlayer;
+    private MediaPlayer mediaPlayer, swoosh;
     private boolean p1turn = true;
     private int p1score = 0;
     private int p2score = 0;
@@ -81,6 +81,7 @@ public class GameActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
         mediaPlayer = MediaPlayer.create(this, R.raw.onhit);
+        swoosh = MediaPlayer.create(this, R.raw.swoosh);
         ball = findViewById(R.id.pingpongball);
         addEnemyCups();
         addPlayerCups();
@@ -116,7 +117,7 @@ public class GameActivity extends AppCompatActivity implements
                         if (result.getResultCode() == Activity.RESULT_OK) {
                             Intent data = result.getData();
                             boolean res = data.getBooleanExtra("result", true);
-                            onEdgeFinish(res);
+                            onEdgeFinish(!res);
                         }
                     }
                 });
@@ -254,6 +255,13 @@ public class GameActivity extends AppCompatActivity implements
                 }
                 cupIsHit(cups.get(edgecup), edgecup);
                 mediaPlayer.start();
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        drink();
+                    }
+                }, 2000);
+
             } else {
                 changePlayer();
             }
@@ -439,6 +447,7 @@ public class GameActivity extends AppCompatActivity implements
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+        swoosh.start();
         if (enemycupspos.isEmpty() && playercupspos.isEmpty()) {
             addEnemyCupsPos();
             addPlayerCupsPos();
@@ -548,8 +557,10 @@ public class GameActivity extends AppCompatActivity implements
     }
 
     public void drink(){
-        Intent intent = new Intent(this, DrinkingActivity.class);
-        startActivity(intent);
+        Intent intentDrink = new Intent(this,
+                DrinkingActivity.class);
+        intentDrink.putExtra("p1turn", p1turn);
+        mGetContent.launch(intentDrink);
     }
 
 }

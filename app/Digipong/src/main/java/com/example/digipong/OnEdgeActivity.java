@@ -70,7 +70,6 @@ public class OnEdgeActivity extends AppCompatActivity implements View.OnLongClic
         setContentView(R.layout.activity_onedge);
 
         swirl = MediaPlayer.create(this, R.raw.spinning);
-
         cup = (ImageView) findViewById(R.id.cup);
         swirl.start();
 

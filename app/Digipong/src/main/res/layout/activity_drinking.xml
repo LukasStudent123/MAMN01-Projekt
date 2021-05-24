@@ -26,4 +26,16 @@
         app:srcCompat="@drawable/filledcup"
         tools:ignore="MissingConstraints" />
 
+    <TextView
+        android:id="@+id/pos"
+        android:layout_width="270dp"
+        android:layout_height="63dp"
+        android:text="TextView"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        app:layout_constraintBottom_toBottomOf="@+id/background"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.881" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -12,6 +12,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 
@@ -21,6 +22,8 @@ public class DrinkingActivity extends AppCompatActivity implements SensorEventLi
     private MediaPlayer mp;
     private ImageView cup;
     final Handler handler = new Handler();
+    private TextView pos;
+    boolean p1turn;
 
     static final float ALPHA = 0.25f; // if ALPHA = 1 OR 0, no filter applies.
     private float[] accSensorVals;
@@ -41,8 +44,8 @@ public class DrinkingActivity extends AppCompatActivity implements SensorEventLi
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_drinking);
-
         cup = (ImageView) findViewById(R.id.drinkingcup);
+        pos = (TextView) findViewById(R.id.pos);
 
         sm = (SensorManager) getSystemService(SENSOR_SERVICE);
         accSensor = sm.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
@@ -50,8 +53,19 @@ public class DrinkingActivity extends AppCompatActivity implements SensorEventLi
 
         mp = MediaPlayer.create(this, R.raw.pouring);
 
-        Toast.makeText(getApplicationContext(), "Make drinking motion" , Toast.LENGTH_SHORT)
-                .show();
+        p1turn = getIntent().getBooleanExtra("p1turn", true);
+
+
+        if(p1turn) {
+            cup.setImageResource(R.drawable.blue_filledcup);
+        } else{
+            cup.setImageResource(R.drawable.filledcup);
+        }
+
+
+
+        //Toast.makeText(getApplicationContext(), "P1: " + p1turn , Toast.LENGTH_SHORT)
+                //.show();
     }
 
     @Override
@@ -63,6 +77,9 @@ public class DrinkingActivity extends AppCompatActivity implements SensorEventLi
         float x = Math.round(accSensorVals[0]);
         float y = Math.round(accSensorVals[1]);
         float z = Math.round(accSensorVals[2]);
+
+        pos.setText("Y: " + y + " z: " + z);
+
         tiltChange(x, y, z);
     }
 
@@ -75,23 +92,25 @@ public class DrinkingActivity extends AppCompatActivity implements SensorEventLi
     }
 
     public void tiltChange(float xVal, float yVal, float zVal){
-        if(yVal > 7 && zVal > 0 ){
-            //mp.start();
+        if(yVal > 8 && zVal > 0 ){
+            mp.start();
             handler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    cup.setImageResource(R.drawable.emptycup);
-                    //mp.release();
-                    //mp.stop();
+                    if(p1turn) {
+                        cup.setImageResource(R.drawable.blue_emptycup);
+                    } else{
+                        cup.setImageResource(R.drawable.emptycup);
+                    }
                 }
-            }, 3000);
+            }, 5000);
 
             handler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
                     finish();
                 }
-            }, 5000);
+            }, 7000);
         }
 
     }
