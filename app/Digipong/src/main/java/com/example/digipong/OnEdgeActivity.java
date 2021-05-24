@@ -16,6 +16,7 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.media.AudioFormat;
 import android.media.AudioRecord;
+import android.media.Image;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.os.Bundle;
@@ -74,8 +75,16 @@ public class OnEdgeActivity extends AppCompatActivity implements View.OnLongClic
         swirl.start();
 
         boolean p1turn = getIntent().getBooleanExtra("p1turn", true);
+        int onEdge;
+        int onEdge_right;
         if(p1turn) {
             //cup.setImageResource(bild på blå mugg)
+
+            onEdge = R.drawable.blue_onedge;
+            onEdge_right = R.drawable.blue_onedge_right;
+        } else{
+            onEdge = R.drawable.onedge;
+            onEdge_right = R.drawable.onedge_right;
         }
 
         cup.setOnClickListener(new View.OnClickListener() {
@@ -92,15 +101,16 @@ public class OnEdgeActivity extends AppCompatActivity implements View.OnLongClic
         //startRecording();
         //int i = recorder.getMaxAmplitude();
 
+
         cdt = new CountDownTimer(3500, 500) {
             boolean b = false;
 
             public void onTick(long millisUntilFinished) {
                 if (b == false) {
-                    cup.setImageResource(R.drawable.cuprotation);
+                    cup.setImageResource(onEdge);
                     b = true;
                 } else if (b == true) {
-                    cup.setImageResource(R.drawable.cupwithball);
+                    cup.setImageResource(onEdge_right);
                     b = false;
                 }
             }

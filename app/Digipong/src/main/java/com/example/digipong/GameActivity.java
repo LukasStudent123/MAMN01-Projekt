@@ -11,6 +11,7 @@ import androidx.core.view.GestureDetectorCompat;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
+import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
@@ -29,6 +30,7 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -67,6 +69,10 @@ public class GameActivity extends AppCompatActivity implements
     private float currentbally;
     private ActivityResultLauncher<Intent> mGetContent;
     private int throwLimit = 0;
+
+    //Sizes of cups
+    int normalPlayerSize;
+    int normalEnemySize;
 
     private boolean isCheating = false; //sätt denna till true om ni vill göra spelet lättare vid testning
 
@@ -114,6 +120,14 @@ public class GameActivity extends AppCompatActivity implements
                         }
                     }
                 });
+        /*
+         xBig = playercups.get(0).getLayoutParams().width;
+         yBig = playercups.get(0).getLayoutParams().height;
+         xSmall = enemycups.get(0).getLayoutParams().width;
+         ySmall = enemycups.get(0).getLayoutParams().height;
+         */
+        normalEnemySize = enemycups.get(0).getLayoutParams().height;
+        normalPlayerSize = playercups.get(0).getLayoutParams().height;
     }
 
     private void addEnemyCups() {
@@ -310,6 +324,22 @@ public class GameActivity extends AppCompatActivity implements
                 .show();
         for (int i = 0; i < 6; i ++) {
             switchCupPos(enemycups.get(i), playercups.get(i), i, i);
+
+            // Change size
+            /*
+            if(!p1turn){
+                enemycups.get(i).getLayoutParams().height = normalEnemySize;
+                enemycups.get(i).requestLayout();
+                playercups.get(i).getLayoutParams().height = normalPlayerSize;
+                playercups.get(i).requestLayout();
+            } else {
+                enemycups.get(i).getLayoutParams().height = normalEnemySize + 75;
+                enemycups.get(i).requestLayout();
+                playercups.get(i).getLayoutParams().height = normalPlayerSize - 55;
+                playercups.get(i).requestLayout();
+            }
+
+             */
         }
         p1turn = !p1turn;
         if (p1turn) {
@@ -354,6 +384,42 @@ public class GameActivity extends AppCompatActivity implements
             animator2.start();
             enemycupspos.get(idx1).set(x2, y2);
             playercupspos.get(idx2).set(x1, y1);
+
+            int enemyCupSize;
+            int playerCupSize;
+            if(!p1turn){
+                enemyCupSize = normalEnemySize;
+                playerCupSize = normalPlayerSize;
+            } else {
+                enemyCupSize = normalEnemySize + 75;
+                playerCupSize = normalPlayerSize - 55;
+            }
+
+            ValueAnimator enemyCupSizeAnimation = ValueAnimator.ofInt(cup1.getMeasuredHeight(), enemyCupSize);
+            enemyCupSizeAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                @Override
+                public void onAnimationUpdate(ValueAnimator valueAnimator) {
+                    int val = (Integer) valueAnimator.getAnimatedValue();
+                    ViewGroup.LayoutParams layoutParams = cup1.getLayoutParams();
+                    layoutParams.height = val;
+                    cup1.setLayoutParams(layoutParams);
+                }
+            });
+            enemyCupSizeAnimation.setDuration(2000);
+            enemyCupSizeAnimation.start();
+
+            ValueAnimator playerCupSizeAnimation = ValueAnimator.ofInt(cup2.getMeasuredHeight(), playerCupSize);
+            playerCupSizeAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                @Override
+                public void onAnimationUpdate(ValueAnimator valueAnimator) {
+                    int val = (Integer) valueAnimator.getAnimatedValue();
+                    ViewGroup.LayoutParams layoutParams = cup2.getLayoutParams();
+                    layoutParams.height = val;
+                    cup2.setLayoutParams(layoutParams);
+                }
+            });
+            playerCupSizeAnimation.setDuration(2000);
+            playerCupSizeAnimation.start();
         }
     }
 
