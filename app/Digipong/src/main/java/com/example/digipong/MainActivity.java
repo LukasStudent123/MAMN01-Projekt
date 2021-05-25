@@ -47,6 +47,7 @@ public class MainActivity extends AppCompatActivity {
         quote.setText(quotes.get(rand.nextInt(3)));
 
         handler = new Handler();
+        /*
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -54,6 +55,8 @@ public class MainActivity extends AppCompatActivity {
                         .show();
             }
         }, 2000);
+        
+         */
     }
 
     public void onUserInteraction(){

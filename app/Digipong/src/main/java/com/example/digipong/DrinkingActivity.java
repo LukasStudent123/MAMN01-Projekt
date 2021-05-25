@@ -14,6 +14,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,6 +27,10 @@ public class DrinkingActivity extends AppCompatActivity implements SensorEventLi
     final Handler handler = new Handler();
     private TextView pos;
     boolean p1turn;
+
+    private ProgressBar pb;
+    private int pbStatus = 0;
+    private TextView procenatge;
 
     static final float ALPHA = 0.25f; // if ALPHA = 1 OR 0, no filter applies.
     private float[] accSensorVals;
@@ -63,6 +68,9 @@ public class DrinkingActivity extends AppCompatActivity implements SensorEventLi
         } else{
             cup.setImageResource(R.drawable.filledcup);
         }
+
+        pb = (ProgressBar) findViewById(R.id.progressBarDrinking);
+        procenatge = (TextView) findViewById(R.id.drinkingPercentage);
     }
 
     @Override
@@ -89,19 +97,14 @@ public class DrinkingActivity extends AppCompatActivity implements SensorEventLi
     }
 
     public void tiltChange(float xVal, float yVal, float zVal){
-        if(yVal > 8 && zVal > 0 ){
-            mp.start();
-            handler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    if(p1turn) {
-                        cup.setImageResource(R.drawable.blue_emptycup);
-                    } else{
-                        cup.setImageResource(R.drawable.emptycup);
-                    }
-                }
-            }, 5000);
 
+        if(yVal > 8 && zVal > 0 ){
+
+
+            mp.start();
+
+
+            /*
             handler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
@@ -112,6 +115,28 @@ public class DrinkingActivity extends AppCompatActivity implements SensorEventLi
                     finish();
                 }
             }, 7000);
+
+             */
+            if(pbStatus <100){
+                pbStatus++;
+                pb.setProgress(pbStatus);
+                procenatge.setText(pbStatus + " %");
+            } else{
+                if(p1turn) {
+                    cup.setImageResource(R.drawable.blue_emptycup);
+                } else{
+                    cup.setImageResource(R.drawable.emptycup);
+                }
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        Intent resultIntent = getIntent();
+                        resultIntent.putExtra("result", true);
+                        setResult(Activity.RESULT_OK, resultIntent);
+                        finish();
+                    }
+                }, 2000);
+            }
         }
 
     }

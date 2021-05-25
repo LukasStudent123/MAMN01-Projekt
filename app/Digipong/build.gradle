@@ -8,7 +8,7 @@ android {
 
     defaultConfig {
         applicationId "com.example.digipong"
-        minSdkVersion 16
+        minSdkVersion 17
         targetSdkVersion 30
         versionCode 1
         versionName "1.0"
@@ -39,4 +39,7 @@ dependencies {
     implementation 'androidx.dynamicanimation:dynamicanimation:1.0.0'
     implementation "androidx.activity:activity:1.2.0"
     implementation "androidx.fragment:fragment:1.3.4"
+
+    implementation 'pl.droidsonroids.gif:android-gif-drawable:1.2.19'
+
 }
