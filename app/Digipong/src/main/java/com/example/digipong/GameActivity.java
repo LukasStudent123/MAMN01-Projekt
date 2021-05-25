@@ -118,7 +118,7 @@ public class GameActivity extends AppCompatActivity implements
                         if (result.getResultCode() == Activity.RESULT_OK) {
                             Intent data = result.getData();
                             boolean res = data.getBooleanExtra("result", true);
-                            onEdgeFinish(!res);
+                            onEdgeFinish(res);
                         }
                     }
                 });
