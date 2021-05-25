@@ -71,6 +71,7 @@ public class DrinkingActivity extends AppCompatActivity implements SensorEventLi
 
         pb = (ProgressBar) findViewById(R.id.progressBarDrinking);
         procenatge = (TextView) findViewById(R.id.drinkingPercentage);
+        procenatge.setText("0 %");
     }
 
     @Override
