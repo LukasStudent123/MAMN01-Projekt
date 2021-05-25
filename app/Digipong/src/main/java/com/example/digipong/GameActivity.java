@@ -107,9 +107,6 @@ public class GameActivity extends AppCompatActivity implements
         mDetector = new GestureDetectorCompat(this,this);
         mDetector.setOnDoubleTapListener(this);
 
-        Toast.makeText(getApplicationContext(), "x & y val" + ball.getX() + ball.getY(), Toast.LENGTH_SHORT)
-                .show();
-
         mGetContent = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
                 new ActivityResultCallback<ActivityResult>() {
                     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)

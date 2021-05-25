@@ -98,7 +98,7 @@ public class DrinkingActivity extends AppCompatActivity implements SensorEventLi
 
     public void tiltChange(float xVal, float yVal, float zVal){
 
-        if(yVal > 8 && zVal > 0 ){
+        if(yVal < 9 && xVal > 3){
 
 
             mp.start();
