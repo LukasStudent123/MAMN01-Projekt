@@ -2,7 +2,9 @@ package com.example.digipong;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -104,6 +106,9 @@ public class DrinkingActivity extends AppCompatActivity implements SensorEventLi
                 @Override
                 public void run() {
                     mp.stop();
+                    Intent resultIntent = getIntent();
+                    resultIntent.putExtra("result", true);
+                    setResult(Activity.RESULT_OK, resultIntent);
                     finish();
                 }
             }, 7000);

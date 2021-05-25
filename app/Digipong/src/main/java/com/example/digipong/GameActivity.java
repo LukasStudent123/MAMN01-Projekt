@@ -68,6 +68,7 @@ public class GameActivity extends AppCompatActivity implements
     private float currentballx;
     private float currentbally;
     private ActivityResultLauncher<Intent> mGetContent;
+    private ActivityResultLauncher<Intent> mGetContent2;
     private int throwLimit = 0;
 
     //Sizes of cups
@@ -118,6 +119,22 @@ public class GameActivity extends AppCompatActivity implements
                             Intent data = result.getData();
                             boolean res = data.getBooleanExtra("result", true);
                             onEdgeFinish(!res);
+                        }
+                    }
+                });
+        mGetContent2 = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
+                new ActivityResultCallback<ActivityResult>() {
+                    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+                    @Override
+                    public void onActivityResult(ActivityResult result) {
+                        if (result.getResultCode() == Activity.RESULT_OK) {
+                            List<ImageView> cups;
+                            if (p1turn) {
+                                cups = enemycups;
+                            } else {
+                                cups = playercups;
+                            }
+                            drinkFinish(cups.get(edgecup), edgecup);
                         }
                     }
                 });
@@ -282,6 +299,47 @@ public class GameActivity extends AppCompatActivity implements
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             vibrator.vibrate(VibrationEffect.createOneShot(500, VibrationEffect.DEFAULT_AMPLITUDE));
         }
+        /*handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                imageView.setImageResource(emptyCup);
+            }
+        }, 1000);
+
+        handler.postDelayed(new Runnable() {
+            @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+            @Override
+            public void run() {
+                List<ImageView> cups;
+                int score;
+                if (p1turn) {
+                    cups = enemycups;
+                    p1score++;
+                    score = p1score;
+                } else {
+                    cups = playercups;
+                    p2score++;
+                    score = p2score;
+                }
+                rankingUpdate();
+                cups.get(i).setVisibility(View.INVISIBLE);
+                if (score == 6) {
+                    reset();
+                } else {
+                    changePlayer();
+                }
+            }
+        }, 3000);*/
+
+    }
+
+    private void drinkFinish(ImageView imageView, int i) {
+        int emptyCup;
+        if(p1turn){
+            emptyCup = R.drawable.blue_emptycup;
+        } else{
+            emptyCup = R.drawable.emptycup;
+        }
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -312,8 +370,7 @@ public class GameActivity extends AppCompatActivity implements
                     changePlayer();
                 }
             }
-        }, 3000);
-
+        }, 2000);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
@@ -353,9 +410,13 @@ public class GameActivity extends AppCompatActivity implements
         if (p1turn) {
             transparentcups = playercups;
             nottransparentcups = enemycups;
+            rankingTextRed.setAlpha(1f);
+            rankingTextBlue.setAlpha(0.5f);
         } else {
             transparentcups = enemycups;
             nottransparentcups = playercups;
+            rankingTextRed.setAlpha(0.5f);
+            rankingTextBlue.setAlpha(1f);
         }
         for (ImageView cup : transparentcups) {
             cup.setAlpha(0.5f);
@@ -560,7 +621,7 @@ public class GameActivity extends AppCompatActivity implements
         Intent intentDrink = new Intent(this,
                 DrinkingActivity.class);
         intentDrink.putExtra("p1turn", p1turn);
-        mGetContent.launch(intentDrink);
+        mGetContent2.launch(intentDrink);
     }
 
 }
