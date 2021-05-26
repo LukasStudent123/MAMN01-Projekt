@@ -8,6 +8,8 @@ import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -79,8 +81,18 @@ public class RankActivity extends AppCompatActivity {
                 textView.setBackgroundColor(Color.rgb(250, 200, 40));
             }
 
+
         }
 
+        final Handler h = new Handler();
+        final Runnable r = new Runnable() {
+            @Override
+            public void run() {
+                ImageView gif = findViewById(R.id.confettiGif);
+                gif.setVisibility(View.INVISIBLE);
+            }
+        };
+        h.postDelayed(r, 3000);
 
     }
 
