@@ -13,10 +13,11 @@ import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 
 public class DrinkingActivity extends AppCompatActivity implements SensorEventListener {
@@ -34,6 +35,9 @@ public class DrinkingActivity extends AppCompatActivity implements SensorEventLi
 
     static final float ALPHA = 0.25f; // if ALPHA = 1 OR 0, no filter applies.
     private float[] accSensorVals;
+
+    private Vibrator vibrator;
+    private boolean tmp = true;
 
 
     protected void onResume() {
@@ -58,7 +62,7 @@ public class DrinkingActivity extends AppCompatActivity implements SensorEventLi
         accSensor = sm.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         sm.registerListener((SensorEventListener) this, accSensor, SensorManager.SENSOR_DELAY_NORMAL);
 
-        mp = MediaPlayer.create(this, R.raw.pouring);
+        mp = MediaPlayer.create(this, R.raw.pouring2);
 
         p1turn = getIntent().getBooleanExtra("p1turn", true);
 
@@ -71,6 +75,10 @@ public class DrinkingActivity extends AppCompatActivity implements SensorEventLi
 
         pb = (ProgressBar) findViewById(R.id.progressBarDrinking);
         procenatge = (TextView) findViewById(R.id.drinkingPercentage);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+        }
     }
 
     @Override
@@ -121,7 +129,15 @@ public class DrinkingActivity extends AppCompatActivity implements SensorEventLi
                 pbStatus++;
                 pb.setProgress(pbStatus);
                 procenatge.setText(pbStatus + " %");
+                if (pbStatus % 15 == 0 && Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    vibrator.vibrate(VibrationEffect.createOneShot(100, VibrationEffect.EFFECT_TICK));
+                }
             } else{
+                if (tmp && Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    vibrator.vibrate(VibrationEffect.createOneShot(750, VibrationEffect.DEFAULT_AMPLITUDE));
+                    tmp = false;
+                }
+                mp.stop();
                 if(p1turn) {
                     cup.setImageResource(R.drawable.blue_emptycup);
                 } else{

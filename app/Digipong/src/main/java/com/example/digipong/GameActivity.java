@@ -58,7 +58,7 @@ public class GameActivity extends AppCompatActivity implements
     private Vibrator vibrator;
     final Handler handler = new Handler();
     public static final float PIXELS_PER_SECOND = 10000;
-    private MediaPlayer mediaPlayer, swoosh;
+    private MediaPlayer mediaPlayer, swoosh, winSound;
     private boolean p1turn = true;
     private int p1score = 0;
     private int p2score = 0;
@@ -70,12 +70,15 @@ public class GameActivity extends AppCompatActivity implements
     private ActivityResultLauncher<Intent> mGetContent;
     private ActivityResultLauncher<Intent> mGetContent2;
     private int throwLimit = 0;
+    private View konfetti;
 
     //Sizes of cups
     int normalPlayerSize;
     int normalEnemySize;
 
     private boolean isCheating = false; //sätt denna till true om ni vill göra spelet lättare vid testning
+    private List<ImageView> playercheatcups = new ArrayList<>();
+    private List<ImageView> enemycheatcups = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,6 +86,7 @@ public class GameActivity extends AppCompatActivity implements
         setContentView(R.layout.activity_game);
         mediaPlayer = MediaPlayer.create(this, R.raw.onhit);
         swoosh = MediaPlayer.create(this, R.raw.swoosh);
+        winSound = MediaPlayer.create(this, R.raw.tadasound);
         ball = findViewById(R.id.pingpongball);
         addEnemyCups();
         addPlayerCups();
@@ -91,6 +95,9 @@ public class GameActivity extends AppCompatActivity implements
         }
         for (ImageView cup : playercups) {
             cup.setAlpha(0.5f);
+        }
+        if (isCheating) {
+            addCheatCups();
         }
 
         ranking = 0;
@@ -143,6 +150,9 @@ public class GameActivity extends AppCompatActivity implements
          */
         normalEnemySize = enemycups.get(0).getLayoutParams().height;
         normalPlayerSize = playercups.get(0).getLayoutParams().height;
+
+        konfetti = findViewById(R.id.konfetti);
+        konfetti.setAlpha(0f);
     }
 
     private void addEnemyCups() {
@@ -161,6 +171,21 @@ public class GameActivity extends AppCompatActivity implements
         playercups.add(findViewById(R.id.mycup3));
         playercups.add(findViewById(R.id.mycup2));
         playercups.add(findViewById(R.id.mycup1));
+    }
+
+    private void addCheatCups() {
+        playercheatcups.add(findViewById(R.id.enemycup1));
+        playercheatcups.add(findViewById(R.id.enemycup2));
+        playercheatcups.add(findViewById(R.id.enemycup3));
+        playercheatcups.add(findViewById(R.id.enemycup4));
+        playercheatcups.add(findViewById(R.id.enemycup5));
+        playercheatcups.add(findViewById(R.id.enemycup6));
+        enemycheatcups.add(findViewById(R.id.enemycup1));
+        enemycheatcups.add(findViewById(R.id.enemycup2));
+        enemycheatcups.add(findViewById(R.id.enemycup3));
+        enemycheatcups.add(findViewById(R.id.enemycup4));
+        enemycheatcups.add(findViewById(R.id.enemycup5));
+        enemycheatcups.add(findViewById(R.id.enemycup6));
     }
 
     private void addEnemyCupsPos() {
@@ -184,6 +209,14 @@ public class GameActivity extends AppCompatActivity implements
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     private void reset() {
         String winner;
+        winSound.start();
+        konfetti.setAlpha(1f);
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                konfetti.setAlpha(0f);
+            }
+        }, 3000);
         if (p1turn) {
             winner = p1name;
         } else {
@@ -199,6 +232,9 @@ public class GameActivity extends AppCompatActivity implements
         addPlayerCups();
         addEnemyCupsPos();
         addPlayerCupsPos();
+        enemycheatcups.clear();
+        playercheatcups.clear();
+        addCheatCups();
         for (ImageView cup : enemycups) {
             cup.setImageResource(R.drawable.blue_filledcup);
             cup.setVisibility(View.VISIBLE);
@@ -250,7 +286,11 @@ public class GameActivity extends AppCompatActivity implements
                     && currentbally + (ballheight / 2) <= tempy + (tempheight * 0.5)) {
 
                 edgecup = i;
-                ballOnEdge();
+                if (i == 3) {
+                    ballOnEdge();
+                } else {
+                    onEdgeFinish(true);
+                }
                 return;
             }
 
@@ -334,8 +374,14 @@ public class GameActivity extends AppCompatActivity implements
         int emptyCup;
         if(p1turn){
             emptyCup = R.drawable.blue_emptycup;
+            if (isCheating) {
+                enemycheatcups.remove(0);
+            }
         } else{
             emptyCup = R.drawable.emptycup;
+            if (isCheating) {
+                playercheatcups.remove(0);
+            }
         }
         handler.postDelayed(new Runnable() {
             @Override
@@ -377,6 +423,7 @@ public class GameActivity extends AppCompatActivity implements
         List<ImageView> transparentcups;
         List<ImageView> nottransparentcups;
         String player;
+        //changePlayerSound.start();
         if (!p1turn) {
             player = p1name;
         } else {
@@ -514,28 +561,51 @@ public class GameActivity extends AppCompatActivity implements
         if (e2.getY() < throwLimit && !isCheating) {
             return true;
         }
-        float maxFlingVelocity    = ViewConfiguration.get(getApplicationContext()).getScaledMaximumFlingVelocity();
-        float velocityPercentX    = velocityX / maxFlingVelocity;          // the percent is a value in the range of (0, 1]
-        float normalizedVelocityX = velocityPercentX * PIXELS_PER_SECOND;  // where PIXELS_PER_SECOND is a device-independent measurement
-        float velocityPercentY    = velocityY / maxFlingVelocity;          // the percent is a value in the range of (0, 1]
-        float normalizedVelocityY = velocityPercentY * PIXELS_PER_SECOND;  // where PIXELS_PER_SECOND is a device-independent measurement
-        int ballwidth = ball.getWidth();
-        int ballheight = ball.getHeight();
-        ballx = ball.getX();
-        bally = ball.getY();
-        currentballx = e2.getX() + (normalizedVelocityX) - (ballwidth / 2);
-        currentbally = e2.getY() + (normalizedVelocityY) - ballheight - 150;
-        System.out.println("fling");
-        Log.v("speed", "velocityX: " + String.valueOf(velocityX) + " velocityY: " + String.valueOf(velocityY));
-        Path path = new Path();
-        //startpunkt för animation
-        path.moveTo(e1.getX() - (ballwidth / 2), e1.getY() - ballheight - 150);
-        //slutpunkt för animation
-        path.lineTo(e2.getX() + (normalizedVelocityX) - (ballwidth / 2), e2.getY() + (normalizedVelocityY) - ballheight - 150);
-        //path.arcTo(0f, 0f, 1000f, 1000f, 270f, -180f, true);
-        ObjectAnimator animator = ObjectAnimator.ofFloat(ball, View.X, View.Y, path);
-        animator.setDuration(2000);
-        animator.start();
+        if (!isCheating) {
+            float maxFlingVelocity = ViewConfiguration.get(getApplicationContext()).getScaledMaximumFlingVelocity();
+            float velocityPercentX = velocityX / maxFlingVelocity;          // the percent is a value in the range of (0, 1]
+            float normalizedVelocityX = velocityPercentX * PIXELS_PER_SECOND;  // where PIXELS_PER_SECOND is a device-independent measurement
+            float velocityPercentY = velocityY / maxFlingVelocity;          // the percent is a value in the range of (0, 1]
+            float normalizedVelocityY = velocityPercentY * PIXELS_PER_SECOND;  // where PIXELS_PER_SECOND is a device-independent measurement
+            int ballwidth = ball.getWidth();
+            int ballheight = ball.getHeight();
+            ballx = ball.getX();
+            bally = ball.getY();
+            currentballx = e2.getX() + (normalizedVelocityX) - (ballwidth / 2);
+            currentbally = e2.getY() + (normalizedVelocityY) - ballheight - 150;
+            System.out.println("fling");
+            Log.v("speed", "velocityX: " + String.valueOf(velocityX) + " velocityY: " + String.valueOf(velocityY));
+            Path path = new Path();
+            //startpunkt för animation
+            path.moveTo(e1.getX() - (ballwidth / 2), e1.getY() - ballheight - 150);
+            //slutpunkt för animation
+            path.lineTo(e2.getX() + (normalizedVelocityX) - (ballwidth / 2), e2.getY() + (normalizedVelocityY) - ballheight - 150);
+            //path.arcTo(0f, 0f, 1000f, 1000f, 270f, -180f, true);
+            ObjectAnimator animator = ObjectAnimator.ofFloat(ball, View.X, View.Y, path);
+            animator.setDuration(2000);
+            animator.start();
+        } else {
+            int ballwidth = ball.getWidth();
+            int ballheight = ball.getHeight();
+            ballx = ball.getX();
+            bally = ball.getY();
+            if (p1turn) {
+                currentballx = enemycheatcups.get(0).getLeft();
+                currentbally = enemycheatcups.get(0).getTop();
+            } else {
+                currentballx = playercheatcups.get(0).getLeft();
+                currentbally = playercheatcups.get(0).getTop();
+            }
+            Path path = new Path();
+            //startpunkt för animation
+            path.moveTo(e1.getX() - (ballwidth / 2), e1.getY() - ballheight - 150);
+            //slutpunkt för animation
+            path.lineTo(currentballx, currentbally);
+            //path.arcTo(0f, 0f, 1000f, 1000f, 270f, -180f, true);
+            ObjectAnimator animator = ObjectAnimator.ofFloat(ball, View.X, View.Y, path);
+            animator.setDuration(2000);
+            animator.start();
+        }
 
         handler.postDelayed(new Runnable() {
             @Override

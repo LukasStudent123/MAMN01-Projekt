@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.graphics.Color;
+import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Bundle;
 import android.widget.ImageView;
@@ -28,11 +29,15 @@ public class RankActivity extends AppCompatActivity {
 
     private ArrayList<Person> persons;
 
+    private MediaPlayer mediaPlayer;
+
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_rank);
+        mediaPlayer = MediaPlayer.create(this, R.raw.tadasound);
+        mediaPlayer.start();
 
         name = getIntent().getStringExtra("x");
         ranking = getIntent().getIntExtra("y", 0);
